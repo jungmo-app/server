@@ -1,8 +1,8 @@
 ---
 name: "\U0001F680 [feature]"
 about: Describe this issue template's purpose here.
-title: ''
-labels: Bug, Docs, Feature, Refactor
+title: "\U0001F680 [feature]"
+labels: Feature
 assignees: ''
 
 ---

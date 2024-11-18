@@ -1,8 +1,8 @@
 ---
 name: "\U0001F4CB [docs]"
 about: Describe this issue template's purpose here.
-title: ''
-labels: Bug, Deploy, Docs
+title: "\U0001F4CB [docs]"
+labels: Docs
 assignees: ''
 
 ---

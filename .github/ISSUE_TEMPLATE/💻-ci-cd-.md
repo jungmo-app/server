@@ -1,8 +1,8 @@
 ---
 name: "\U0001F4BB[ci/cd]"
 about: Describe this issue template's purpose here.
-title: ''
-labels: Bug, Deploy
+title: "\U0001F4BB[ci/cd]"
+labels: Deploy
 assignees: ''
 
 ---

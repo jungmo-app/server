@@ -1,8 +1,8 @@
 ---
 name: "\U0001F528[refactor]"
 about: Describe this issue template's purpose here.
-title: ''
-labels: Bug, Deploy, Docs, Refactor
+title: "\U0001F528[refactor]"
+labels: Refactor
 assignees: ''
 
 ---

@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41B[bug]"
 about: Describe this issue template's purpose here.
-title: ''
+title: "\U0001F41B[bug]"
 labels: Bug
 assignees: ''
 
