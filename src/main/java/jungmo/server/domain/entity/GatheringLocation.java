@@ -17,7 +17,11 @@ public class GatheringLocation {
     private Long id;
     @Column(name = "is_first_location")
     private boolean isFirstLocation;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gathering_id")
+    private Gathering gathering;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_location_id")
     private Location location;
+
 }
