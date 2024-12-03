@@ -34,13 +34,11 @@ public class Gathering {
     private String memo;
     @Column(name = "gathering_all_expense")
     private Long allExpense;
-    @OneToMany
-    @JoinColumn(name = "gathering_id")
+    @OneToMany(mappedBy = "gathering")
     private List<Expense> expenseList = new ArrayList<>();
     @OneToMany(mappedBy = "gathering")
     private List<GatheringUser> gatheringUsers = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.PERSIST,orphanRemoval = true)
-    @JoinColumn(name = "gathering_id")
+    @OneToMany(mappedBy = "gathering",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<GatheringLocation> gatheringLocations = new ArrayList<>();
 
 }

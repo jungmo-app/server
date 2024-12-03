@@ -23,5 +23,8 @@ public class Expense {
     private String expenseDate;
     @Column(name = "expense_amount")
     private String expenseAmount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gathering_id")
+    private Gathering gathering;
 
 }
