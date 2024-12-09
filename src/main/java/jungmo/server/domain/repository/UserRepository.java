@@ -1,4 +1,4 @@
-package jungmo.server.domain.auth.repository;
+package jungmo.server.domain.repository;
 
 import jungmo.server.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

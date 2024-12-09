@@ -3,7 +3,7 @@ package jungmo.server.domain.auth.service;
 import jungmo.server.domain.auth.dto.LoginRequest;
 import jungmo.server.domain.auth.dto.RegisterRequest;
 import jungmo.server.domain.auth.dto.TokenResponse;
-import jungmo.server.domain.auth.repository.UserRepository;
+import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import jungmo.server.domain.entity.User;
@@ -18,7 +18,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final RedisService redisService;
 
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -47,7 +47,7 @@ public class AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
 
-        refreshTokenService.saveTokens(user.getEmail(), accessToken, refreshToken);
+        redisService.saveRefreshToken(user.getEmail(), refreshToken);
 
         return new TokenResponse(accessToken, refreshToken);
     }
