@@ -42,6 +42,14 @@ jobs:
           echo "${{ secrets.APPLICATION_AWS_YML }}" | base64 --decode > src/main/resources/application-aws.yml
           find src
 
+      - name: application-jwt.yml 파일 만들기
+        run: |
+          echo "${{ secrets.APPLICATION_JWT_YML }}" | base64 --decode > src/main/resources/application-jwt.yml
+          find src
+
+
+      
+
 
       - name: gradlew에 실행 권한 추가
         run: chmod +x ./gradlew
