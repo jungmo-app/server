@@ -1,10 +1,8 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jungmo.server.global.auditing.BaseTimeEntity;
+import lombok.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.ArrayList;
@@ -14,8 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +24,10 @@ public class User {
     private String userName;
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "user_role")
+    private String role;
     @Column(name = "profile_image")
     private String profileImage;
     @Column(name = "provider")
@@ -34,4 +35,16 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<GatheringUser> gatheringUserList = new ArrayList<>();
 
+    @Builder
+    public User(Long id, String userCode, String userName, String email, String password, String role, String profileImage, String provider, List<GatheringUser> gatheringUserList) {
+        this.id = id;
+        this.userCode = userCode;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.profileImage = profileImage;
+        this.provider = provider;
+        this.gatheringUserList = gatheringUserList;
+    }
 }
