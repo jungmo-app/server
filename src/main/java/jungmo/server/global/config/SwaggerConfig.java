@@ -20,9 +20,9 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Documentation")
+                        .title("Jungmo")
                         .version("1.0.0")
-                        .description("API 명세서"))
+                        .description("jungmo server API 명세서"))
                 .addServersItem(new Server().url("https://jungmoserver.shop").description("jungmo Server")) // 서버 URL 명시
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
