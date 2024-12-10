@@ -6,8 +6,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.CustomJwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -20,17 +20,18 @@ import java.util.List;
 
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "spring.jwt")
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private String secret;
+    private final JwtProperties jwtProperties;
+    private String secretKey;
 
     private final long accessTokenExpiration = 1000 * 60 * 30; //30분
     private final long refreshTokenExpiration = 1000 * 60 * 60 * 24 * 7;  //7일
 
     @PostConstruct
     protected void init() {
-        secret = Base64.getEncoder().encodeToString(secret.getBytes());
+        secretKey = Base64.getEncoder().encodeToString(jwtProperties.getSecret().getBytes());
     }
 
     public String generateAccessToken(String email) {
@@ -38,7 +39,7 @@ public class JwtTokenProvider {
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -47,13 +48,13 @@ public class JwtTokenProvider {
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED, e);
@@ -78,7 +79,7 @@ public class JwtTokenProvider {
 
     public String getEmailFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -105,7 +106,7 @@ public class JwtTokenProvider {
 
     public long getExpiration(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration()

@@ -1,8 +1,8 @@
 package jungmo.server.domain.auth.service;
 
-import jungmo.server.domain.auth.dto.LoginRequest;
-import jungmo.server.domain.auth.dto.RegisterRequest;
-import jungmo.server.domain.auth.dto.TokenResponse;
+import jungmo.server.domain.auth.dto.LoginRequestDto;
+import jungmo.server.domain.auth.dto.RegisterRequestDto;
+import jungmo.server.domain.auth.dto.TokenResponseDto;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
-    public void register(RegisterRequest request) {
+    public void register(RegisterRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already in use");
         }
@@ -36,7 +36,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public TokenResponse login(LoginRequest request) {
+    public TokenResponseDto login(LoginRequestDto request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
 
@@ -49,6 +49,6 @@ public class AuthService {
 
         redisService.saveRefreshToken(user.getEmail(), refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken);
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 }

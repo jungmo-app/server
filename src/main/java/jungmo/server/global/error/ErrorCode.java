@@ -13,7 +13,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "C003", "method not allowed"),
     INVALID_TYPE_VALUE(400, "C004", "invalid type value"),
     BAD_CREDENTIALS(400, "C005", "bad credentials"),
-    AUTHENTICATION_FAILED(400, "C006", "인증에 실패하였습니다"),
+    INVALID_REFRESH_TOKEN(400, "C006", "Invalid or expired refresh token"),
+    AUTHENTICATION_FAILED(400, "C007", "인증에 실패하였습니다"),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),

@@ -1,11 +1,8 @@
 package jungmo.server.global.error.exception;
 
 import jungmo.server.global.error.ErrorCode;
-import jungmo.server.global.error.ErrorResponse;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class CustomJwtException extends RuntimeException{
