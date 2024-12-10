@@ -1,6 +1,7 @@
 package jungmo.server.global.error;
 
 import jungmo.server.global.error.exception.BusinessException;
+import jungmo.server.global.error.exception.CustomJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
