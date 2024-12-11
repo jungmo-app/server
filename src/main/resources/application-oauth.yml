@@ -1,0 +1,9 @@
+spring:
+  kakao:
+    client-id: 4794409ca4a51f28467ed35bd606fd34
+    client-secret: rxNuKGQFJ9hOH8c0yXCjd7IlknCh5hss
+    redirect-uri: https://jungmoserver.shop/oauth2/code/kakao
+    auth-url: https://kauth.kakao.com/oauth/token
+    user-info-url: https://kapi.kakao.com/v2/user/me
+
+

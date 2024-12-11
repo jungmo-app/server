@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jungmo.server.global.auth.service.CustomUserDetailsService;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.CustomJwtException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class JwtTokenProvider {
 
     private final JwtProperties jwtProperties;
     private String secretKey;
+    private final CustomUserDetailsService userDetailsService;
 
     private final long accessTokenExpiration = 1000 * 60 * 30; //30분
     private final long refreshTokenExpiration = 1000 * 60 * 60 * 24 * 7;  //7일
@@ -52,6 +54,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // 토큰에서 Authentication 객체 생성
+    public Authentication getAuthentication(String token) {
+        String email = getEmailFromToken(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -70,13 +79,6 @@ public class JwtTokenProvider {
     }
 
 
-
-    public Authentication getAuthentication(String token) {
-        String email = getEmailFromToken(token);
-        UserDetails userDetails = new User(email, "", List.of());
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
     public String getEmailFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
@@ -93,16 +95,6 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public String resolveRefreshTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
-        for (Cookie cookie : cookies) {
-            if ("refreshToken".equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
 
     public long getExpiration(String token) {
         return Jwts.parser()
