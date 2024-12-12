@@ -1,11 +1,11 @@
 package jungmo.server.global.auth.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jungmo.server.domain.repository.UserRepository;
-import jungmo.server.global.auth.dto.request.AuthorizationCodeRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
-import jungmo.server.global.auth.dto.response.KakaoUserInfo;
 import jungmo.server.global.auth.dto.response.TokenResponseDto;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,6 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
-    private final KakaoService kakaoService;
 
     @Transactional
     public void register(RegisterRequestDto request) {
@@ -61,70 +60,71 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public TokenResponseDto login(LoginRequestDto request) {
+    /**
+     * 로그인 처리
+     */
+    public void login(LoginRequestDto request, HttpServletResponse response) {
         try {
+            // 1. 이메일과 비밀번호를 기반으로 인증
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
+            // 2. 인증 성공 후 Principal에서 사용자 정보 추출
             PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
             String email = principal.getUsername();
 
+            // 3. Access Token과 Refresh Token 생성
             String accessToken = jwtTokenProvider.generateAccessToken(email);
             String refreshToken = jwtTokenProvider.generateRefreshToken(email);
 
-            redisService.saveRefreshToken(email, refreshToken);
+            // 4. Redis에 Refresh Token 저장 (만료 시간 적용)
+            redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-            return new TokenResponseDto(accessToken, refreshToken);
+            // 5. Access Token과 Refresh Token을 쿠키에 저장
+            addCookie(response, "accessToken", accessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
+            addCookie(response, "refreshToken", refreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
 
         } catch (AuthenticationException e) {
             throw new IllegalArgumentException("Invalid email or password", e);
         }
-
     }
 
-    public TokenResponseDto refreshToken(RefreshTokenRequestDto request) {
+
+    /**
+     * Refresh Token을 사용한 Access Token 재발급
+     */
+    public void refreshToken(RefreshTokenRequestDto request, HttpServletResponse response) {
+        // 1. Refresh Token에서 이메일 추출
         String email = jwtTokenProvider.getEmailFromToken(request.getRefreshToken());
 
+        // 2. Redis에서 저장된 Refresh Token 가져오기
         String savedRefreshToken = redisService.getRefreshToken(email);
+
+        // 3. Refresh Token 검증
         if (savedRefreshToken == null || !savedRefreshToken.equals(request.getRefreshToken())) {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
+        // 4. 새로운 Access Token과 Refresh Token 생성
         String newAccessToken = jwtTokenProvider.generateAccessToken(email);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
 
-        redisService.saveRefreshToken(email, newRefreshToken);
+        // 5. Redis에 새로운 Refresh Token 저장
+        redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        return new TokenResponseDto(newAccessToken, newRefreshToken);
+        // 6. 쿠키에 새로운 토큰 저장
+        addCookie(response, "accessToken", newAccessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
+        addCookie(response, "refreshToken", newRefreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
+
     }
 
-    public TokenResponseDto authenticateWithKakao(AuthorizationCodeRequest request) {
-        // 카카오 사용자 정보 가져오기
-        KakaoUserInfo userInfo = kakaoService.getUserInfo(request.getAuthorizationCode());
-
-        // JWT 생성
-        String accessToken = jwtTokenProvider.generateAccessToken(userInfo.getEmail());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(userInfo.getEmail());
-        redisService.saveRefreshToken(userInfo.getEmail(), refreshToken);
-
-        // Authentication 생성 및 SecurityContext에 저장
-        User user = userRepository.findByEmail(userInfo.getEmail())
-                .orElseGet(() -> {
-                    // 신규 사용자 생성 및 저장
-                    User newUser = User.builder()
-                            .email(userInfo.getEmail())
-                            .userName(userInfo.getNickname())
-                            .password("KAKAO") // 임의 값 설정 (카카오는 비밀번호가 없음)
-                            .role("ROLE_USER")
-                            .provider("kakao")
-                            .build();
-                    return userRepository.save(newUser);
-                });
-
-        saveAuthentication(user);
-
-        return new TokenResponseDto(accessToken, refreshToken);
+    private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(false); // 개발중에는 false로 해서 프론트측에서 접근할수있도록
+        cookie.setMaxAge(maxAge); // 쿠키 만료 시간 설정
+        cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
+        response.addCookie(cookie);
     }
 
 }

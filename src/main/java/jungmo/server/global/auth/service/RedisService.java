@@ -12,8 +12,8 @@ public class RedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void saveRefreshToken(String email, String refreshToken) {
-        redisTemplate.opsForValue().set(email, refreshToken, 14, TimeUnit.DAYS);
+    public void saveRefreshToken(String email, String refreshToken, long expiry) {
+        redisTemplate.opsForValue().set(email, refreshToken, expiry, TimeUnit.MILLISECONDS);
     }
 
     public String getRefreshToken(String email) {

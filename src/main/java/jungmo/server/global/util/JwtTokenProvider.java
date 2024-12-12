@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jungmo.server.global.auth.service.CustomUserDetailsService;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.CustomJwtException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
+@Getter
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {

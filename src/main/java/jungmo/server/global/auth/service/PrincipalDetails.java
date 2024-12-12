@@ -5,30 +5,42 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Map;
+import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class PrincipalDetails implements UserDetails {
+import java.util.Collection;
+import java.util.Map;
+
+@Getter
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private final User user;
-    private Map<String, Object> attributes; // OAuth2 속성
+    private Map<String, Object> attributes;
 
-    // 일반 로그인용 생성자
     public PrincipalDetails(User user) {
         this.user = user;
     }
 
-    // OAuth2 로그인용 생성자
     public PrincipalDetails(User user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }
 
-    public User getUser() {
-        return user;
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(user.getId());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null; // 권한 처리 생략
+        return null;
     }
 
     @Override
@@ -60,5 +72,5 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }
+
