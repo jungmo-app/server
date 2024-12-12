@@ -52,8 +52,6 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // HTTPS 강제 비활성화
-        http.requiresChannel(channel -> channel.anyRequest().requiresInsecure()); // HTTP 허용
         return http.build();
 
     }
