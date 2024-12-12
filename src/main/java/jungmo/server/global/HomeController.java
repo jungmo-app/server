@@ -10,8 +10,4 @@ public class HomeController {
     public String home() {
         return "Welcome to Jungmo Server!";
     }
-    @GetMapping("auth/login-success")
-    public String login() {
-        return "Welcome to Jungmo Server!";
-    }
 }
