@@ -1,4 +1,4 @@
-package jungmo.server.domain.auth.dto;
+package jungmo.server.global.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
