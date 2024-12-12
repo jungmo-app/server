@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 적용
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/auth/**", "/oauth2/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 인증 없이 접근 가능 경로
+                                .requestMatchers("/auth/**", "/oauth2/**","/login/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 인증 없이 접근 가능 경로
                                 .anyRequest().authenticated()
                         // 그 외 경로는 인증 필요
                 )
@@ -46,11 +46,14 @@ public class SecurityConfig {
                         .authenticationEntryPoint(customAuthenticationEntryPoint) // 인증 실패 처리
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/kakao")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // HTTPS 강제 비활성화
+        http.requiresChannel(channel -> channel.anyRequest().requiresInsecure()); // HTTP 허용
         return http.build();
 
     }

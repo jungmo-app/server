@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -38,6 +39,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String email = (String) kakaoAccount.get("email");
         String nickname = (String) properties.get("nickname");
 
+        // 사용자 속성에 email 추가
+        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+        attributes.put("email", email);
+
         if (email == null) {
             throw new IllegalArgumentException("OAuth2 인증에서 이메일을 가져올 수 없습니다.");
         }
@@ -54,7 +59,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 4. DefaultOAuth2User 객체 반환
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole())), // 권한 설정
-                oAuth2User.getAttributes(), // 사용자 속성
+                attributes, // 사용자 속성
                 "email" // 이메일을 기본 식별자로 설정
         );
     }
