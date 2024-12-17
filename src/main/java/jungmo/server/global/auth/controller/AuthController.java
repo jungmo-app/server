@@ -22,9 +22,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResultDetailResponse<Void> register(@RequestBody @Valid RegisterRequestDto request) {
-        authService.register(request);
-        return new ResultDetailResponse(ResultCode.REGISTER_SUCCESS, null);
+    public ResponseEntity<ResultDetailResponse<Void>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response) {
+        authService.register(request,response);
+        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.REGISTER_SUCCESS, null);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/login")

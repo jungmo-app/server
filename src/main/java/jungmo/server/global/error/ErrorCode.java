@@ -12,9 +12,10 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE(400, "C002", "invalid input type"),
     METHOD_NOT_ALLOWED(405, "C003", "method not allowed"),
     INVALID_TYPE_VALUE(400, "C004", "invalid type value"),
-    BAD_CREDENTIALS(400, "C005", "bad credentials"),
+    BAD_CREDENTIALS(400, "C005", "invalid email or password"),
     INVALID_REFRESH_TOKEN(400, "C006", "Invalid or expired refresh token"),
     AUTHENTICATION_FAILED(400, "C007", "인증에 실패하였습니다"),
+    EMAIL_ALREADY_EXISTS(400, "C008", "이미 존재하는 이메일 입니다"),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),
