@@ -4,10 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.GatheringDto;
+import jungmo.server.domain.dto.request.GatheringUserDto;
 import jungmo.server.domain.dto.response.GatheringListResponseDto;
 import jungmo.server.domain.dto.response.GatheringResponseDto;
+import jungmo.server.domain.entity.Authority;
 import jungmo.server.domain.entity.Gathering;
+import jungmo.server.domain.entity.GatheringStatus;
 import jungmo.server.domain.service.GatheringService;
+import jungmo.server.domain.service.GatheringUserService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
@@ -23,12 +27,15 @@ import java.util.List;
 public class GatheringController {
 
     private final GatheringService gatheringService;
+    private final GatheringUserService gatheringUserService;
 
     @PostMapping("/save")
     @Operation(summary = "모임생성 API", description = "모임을 생성하는 API, 모임을 만든사람은 write 권한을 갖는다.")
     public ResultDetailResponse<String> saveGathering(@RequestBody @Valid GatheringDto gatheringDto) {
-        Long savedId = gatheringService.saveGathering(gatheringDto);
-        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(savedId));
+        Gathering gathering = gatheringService.saveGathering(gatheringDto);
+        GatheringUserDto gatheringUserDto = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
+        gatheringUserService.saveGatheringUser(gatheringUserDto,gathering);
+        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(gathering.getId()));
     }
 
     @PostMapping("/{gathering_id}/update")

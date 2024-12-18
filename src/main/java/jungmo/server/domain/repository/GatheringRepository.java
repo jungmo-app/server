@@ -14,6 +14,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long> {
     @Query("select new jungmo.server.domain.dto.response.GatheringListResponseDto(g.title,g.startDate,g.endDate,g.startTime) " +
     "from Gathering g " +
     "join g.gatheringUsers gu " +
-    "where gu.user.id = :userId and gu.status = :status")
+    "where gu.user.id = :userId and gu.status = :status and g.isDeleted = false")
     List<GatheringListResponseDto> findAllByUserId(@Param("userId") Long userId, @Param("status") GatheringStatus status);
 }

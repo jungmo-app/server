@@ -38,7 +38,7 @@ public class Gathering {
     private Boolean isDeleted;  //삭제된 모임여부
     @OneToMany(mappedBy = "gathering")
     private List<Expense> expenseList = new ArrayList<>();
-    @OneToMany(mappedBy = "gathering")
+    @OneToMany(mappedBy = "gathering", cascade = CascadeType.PERSIST)
     private List<GatheringUser> gatheringUsers = new ArrayList<>();
     @OneToMany(mappedBy = "gathering",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<GatheringLocation> gatheringLocations = new ArrayList<>();
