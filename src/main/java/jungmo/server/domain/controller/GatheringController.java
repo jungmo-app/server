@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.GatheringDto;
+import jungmo.server.domain.dto.response.GatheringListResponseDto;
 import jungmo.server.domain.dto.response.GatheringResponseDto;
 import jungmo.server.domain.entity.Gathering;
 import jungmo.server.domain.service.GatheringService;
@@ -12,6 +13,8 @@ import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +49,11 @@ public class GatheringController {
         return new ResultDetailResponse<>(ResultCode.GET_GATHERING, dto);
     }
 
+    @GetMapping("/list")
+    @Operation(summary = "모임 목록 조회 API" , description = "로그인 된 사용자에게 예정된 모임들을 모두 조회한다.")
+    public ResultListResponse<GatheringListResponseDto> getMyGathering(){
+        List<GatheringListResponseDto> myGatherings = gatheringService.findMyGatherings();
+        return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, myGatherings);
+    }
 
 }

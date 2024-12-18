@@ -2,6 +2,7 @@ package jungmo.server.domain.service;
 
 import jungmo.server.domain.dto.request.GatheringDto;
 import jungmo.server.domain.dto.request.GatheringUserDto;
+import jungmo.server.domain.dto.response.GatheringListResponseDto;
 import jungmo.server.domain.dto.response.GatheringResponseDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -54,7 +56,7 @@ public class GatheringService {
     public void updateGathering(Long gatheringId, GatheringDto gatheringDto) {
         User user = getUser();
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
-        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByGatheringUserByAuthority(user, gathering, Authority.WRITE);
+        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
         if (gatheringUser.isPresent()) {
             gathering.update(gatheringDto);
         }
@@ -70,8 +72,10 @@ public class GatheringService {
 
     }
 
-    public void findMyGatherings() {
-
+    public List<GatheringListResponseDto> findMyGatherings() {
+        User user = getUser();
+        List<GatheringListResponseDto> allGatherings = gatheringRepository.findAllByUserId(user.getId(), GatheringStatus.ACCEPT);
+        return allGatherings;
     }
 
     private User getUser() {
