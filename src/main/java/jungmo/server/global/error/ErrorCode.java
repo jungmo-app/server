@@ -21,7 +21,10 @@ public enum ErrorCode {
     TOKEN_EXPIRED(401, "T001", "Token has expired"),
     INVALID_TOKEN(401, "T002", "Invalid token"),
     MALFORMED_TOKEN(401, "T003", "Malformed token"),
-    UNSUPPORTED_TOKEN(401, "T004", "Unsupported token");
+    UNSUPPORTED_TOKEN(401, "T004", "Unsupported token"),
+
+    //Gathering
+    GATHERING_NOT_EXISTS(404,"G001","gathering does not exists");
 
 
     private int status;

@@ -12,7 +12,8 @@ public enum ResultCode {
     REFRESH_SUCCESS(200, "U003", "토큰 재발급 완료"),
 
     //Gathering
-    REGISTER_GATHERING(200,"G001","모임 생성 완료");
+    REGISTER_GATHERING(200,"G001","모임 생성 완료"),
+    UPDATE_GATHERING(200,"G002","모임 수정 완료");
 
     private int status;
     private final String code;

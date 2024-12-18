@@ -23,12 +23,13 @@ public class GatheringUserService {
 
     @Transactional
     public GatheringUser saveGatheringUser(GatheringUserDto dto) {
+        //모임유저 생성
         User user = getUser();
         GatheringUser gatheringUser = GatheringUser.builder()
                 .authority(dto.getAuthority())
                 .status(dto.getStatus())
                 .build();
-
+        //연관관계 매핑
         gatheringUser.setUser(user);
         GatheringUser savedUser = gatheringUserRepository.save(gatheringUser);
         return savedUser;

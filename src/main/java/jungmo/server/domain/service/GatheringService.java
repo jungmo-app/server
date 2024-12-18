@@ -4,14 +4,19 @@ import jungmo.server.domain.dto.request.GatheringDto;
 import jungmo.server.domain.dto.request.GatheringUserDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
+import jungmo.server.domain.repository.GatheringUserRepository;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
+import jungmo.server.global.error.ErrorCode;
+import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,6 +26,7 @@ public class GatheringService {
     private final GatheringRepository gatheringRepository;
     private final UserRepository userRepository;
     private final GatheringUserService gatheringUserService;
+    private final GatheringUserRepository gatheringUserRepository;
 
     @Transactional
     public Long saveGathering(GatheringDto dto) {
@@ -32,6 +38,7 @@ public class GatheringService {
                 .startTime(dto.getStartTime())
                 .memo(dto.getMemo())
                 .allExpense(0L)
+                .isConnected(false)
                 .build();
         //모임유저 생성
         GatheringUserDto writeUser = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
@@ -43,8 +50,13 @@ public class GatheringService {
     }
 
     @Transactional
-    public void updateGathering(Long gatheringId) {
-
+    public void updateGathering(Long gatheringId, GatheringDto gatheringDto) {
+        User user = getUser();
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
+        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByGatheringUserByAuthority(user, gathering, Authority.WRITE);
+        if (gatheringUser.isPresent()) {
+            gathering.update(gatheringDto);
+        }
     }
 
     @Transactional
@@ -52,11 +64,12 @@ public class GatheringService {
 
     }
 
-    public void getGathering() {
+    public Gathering findGathering(Long gatheringId) {
+        return gatheringRepository.findById(gatheringId).orElseThrow(() ->new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
 
     }
 
-    public void getGatherings() {
+    public void findMyGatherings() {
 
     }
 
