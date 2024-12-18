@@ -45,6 +45,6 @@ public class User extends BaseTimeEntity {
         this.role = role;
         this.profileImage = profileImage;
         this.provider = provider;
-        this.gatheringUserList = gatheringUserList;
+        this.gatheringUserList = gatheringUserList != null ? gatheringUserList : new ArrayList<>();
     }
 }

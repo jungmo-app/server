@@ -1,11 +1,10 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "gathering")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Gathering {
 
     @Id
@@ -23,13 +21,11 @@ public class Gathering {
     @Column(name = "gathering_title")
     private String title;
     @Column(name = "gathering_start_date")
-    private String startDate;
+    private LocalDate startDate;
     @Column(name = "gathering_end_date")
-    private String endDate;
+    private LocalDate endDate;
     @Column(name = "gathering_start_time")
-    private String startTime;
-    @Column(name = "gathering_end_time")
-    private String endTime;
+    private LocalTime startTime;
     @Column(name = "gathering_memo")
     private String memo;
     @Column(name = "gathering_all_expense")
@@ -41,4 +37,17 @@ public class Gathering {
     @OneToMany(mappedBy = "gathering",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<GatheringLocation> gatheringLocations = new ArrayList<>();
 
+    @Builder
+    public Gathering(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, Long allExpense, List<Expense> expenseList, List<GatheringUser> gatheringUsers, List<GatheringLocation> gatheringLocations) {
+        this.id = id;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.memo = memo;
+        this.allExpense = allExpense;
+        this.expenseList = expenseList!= null ? expenseList : new ArrayList<>();
+        this.gatheringUsers = gatheringUsers!= null ? gatheringUsers : new ArrayList<>();
+        this.gatheringLocations = gatheringLocations!= null ? gatheringLocations : new ArrayList<>();
+    }
 }
