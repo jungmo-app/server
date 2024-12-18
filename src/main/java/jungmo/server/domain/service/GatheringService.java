@@ -2,6 +2,7 @@ package jungmo.server.domain.service;
 
 import jungmo.server.domain.dto.request.GatheringDto;
 import jungmo.server.domain.dto.request.GatheringUserDto;
+import jungmo.server.domain.dto.response.GatheringResponseDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
@@ -78,5 +79,9 @@ public class GatheringService {
         SecurityUserDto securityUser = (SecurityUserDto) authentication.getPrincipal();
         Long userId = securityUser.getUserId();
         return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+    }
+
+    public GatheringResponseDto toDto(Gathering gathering) {
+        return gathering.toDto();
     }
 }

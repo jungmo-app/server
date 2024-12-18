@@ -34,11 +34,17 @@ public class GatheringController {
                                                                       @RequestBody @Valid GatheringDto gatheringDto) {
         gatheringService.updateGathering(gathering_id, gatheringDto);
         Gathering gathering = gatheringService.findGathering(gathering_id);
-        GatheringResponseDto dto = gathering.toDto();
+        GatheringResponseDto dto = gatheringService.toDto(gathering);
         return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING, dto);
     }
 
-
+    @GetMapping("/{gathering_id}")
+    @Operation(summary = "모임 조회 API", description = "모임의 상세조회 API.")
+    public ResultDetailResponse<GatheringResponseDto> getGathering(@PathVariable Long gathering_id) {
+        Gathering gathering = gatheringService.findGathering(gathering_id);
+        GatheringResponseDto dto = gatheringService.toDto(gathering);
+        return new ResultDetailResponse<>(ResultCode.GET_GATHERING, dto);
+    }
 
 
 }
