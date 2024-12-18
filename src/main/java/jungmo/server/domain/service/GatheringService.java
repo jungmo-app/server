@@ -42,6 +42,7 @@ public class GatheringService {
                 .memo(dto.getMemo())
                 .allExpense(0L)
                 .isConnected(false)
+                .isDeleted(false)
                 .build();
         //모임유저 생성
         GatheringUserDto writeUser = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
@@ -58,13 +59,30 @@ public class GatheringService {
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
         if (gatheringUser.isPresent()) {
-            gathering.update(gatheringDto);
+            if (!gathering.getIsDeleted()) {
+                gathering.update(gatheringDto);
+            } else {
+                throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
+            }
+        } else {
+            throw new BusinessException(ErrorCode.NOT_HAVE_WRITE_AUTHORITY);
         }
     }
 
     @Transactional
     public void deleteGathering(Long gatheringId) {
-
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
+        User user = getUser();
+        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
+        if (gatheringUser.isPresent()) {
+            if (!gathering.getIsDeleted()) {
+                gathering.setDeleted(true);
+            } else {
+                throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
+            }
+        } else {
+            throw new BusinessException(ErrorCode.NOT_HAVE_WRITE_AUTHORITY);
+        }
     }
 
     public Gathering findGathering(Long gatheringId) {

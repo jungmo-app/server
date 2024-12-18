@@ -56,4 +56,11 @@ public class GatheringController {
         return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, myGatherings);
     }
 
+    @PostMapping("/{gathering_id}/del")
+    @Operation(summary = "모임 삭제 API", description = "모임을 삭제하는 API, write권한을 가진 사람만 삭제가 가능하다.")
+    public ResultDetailResponse<Void> deleteGathering(@PathVariable Long gathering_id) {
+        gatheringService.deleteGathering(gathering_id);
+        return new ResultDetailResponse<>(ResultCode.DELETE_GATHERING, null);
+    }
+
 }
