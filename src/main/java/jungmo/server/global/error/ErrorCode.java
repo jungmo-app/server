@@ -30,7 +30,8 @@ public enum ErrorCode {
     GATHERING_ALREADY_DELETED(404,"G003","이미 삭제된 모임입니다."),
     NO_AUTHORITY(404, "G004", "모임을 수정할 수 있는 권한이 없습니다."),
     ALREADY_CHOOSE(404, "G005", "이미 모임의 참석자이거나 거절한 모임입니다."),
-    INVITATION_NOT_EXISTS(404, "G005", "수락 할 초대가 존재하지 않습니다.");
+    INVITATION_NOT_EXISTS(404, "G005", "수락 할 초대가 존재하지 않습니다."),
+    NOT_A_GATHERING_USER(404, "G005", "모임에 포함되지 않은 유저입니다.");
 
 
     private int status;

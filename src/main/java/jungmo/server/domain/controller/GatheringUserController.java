@@ -2,11 +2,15 @@ package jungmo.server.domain.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.service.GatheringUserService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
+import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,5 +42,10 @@ public class GatheringUserController {
         return new ResultDetailResponse<>(ResultCode.REJECT_INVITATION, null);
     }
 
-
+    @GetMapping("/{gathering_id}/userList")
+    @Operation(summary = "모임참석자 모두 조회 API", description = "모임에 속해있는 참석자들을 모두 조회하는 API")
+    public ResultListResponse<UserDto> getParticipantList(@PathVariable Long gathering_id) {
+        List<UserDto> users = gatheringUserService.getUsers(gathering_id);
+        return new ResultListResponse<>(ResultCode.GET_ALL_GATHERING_USERS, users);
+    }
 }

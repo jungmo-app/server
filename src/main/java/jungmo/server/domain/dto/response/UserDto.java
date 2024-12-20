@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDto {
 
-    private Long id;
+    private Long userId;
     private String userCode;
     private String userName;
     private String profileImage;
 
     public UserDto(Long id, String userCode, String userName, String profileImage) {
-        this.id = id;
+        this.userId = id;
         this.userCode = userCode;
         this.userName = userName;
         this.profileImage = profileImage;

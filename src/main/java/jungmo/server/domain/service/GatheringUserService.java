@@ -1,6 +1,7 @@
 package jungmo.server.domain.service;
 
 import jungmo.server.domain.dto.request.GatheringUserDto;
+import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -77,6 +79,14 @@ public class GatheringUserService {
                 pendingUser.get().setStatus(GatheringStatus.REJECT);
             } else throw new BusinessException(ErrorCode.ALREADY_CHOOSE);
         } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
+    }
+
+    public List<UserDto> getUsers(Long gatheringId) {
+        User user = getUser();
+        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
+        if (gatheringUser.isPresent()) {
+            return gatheringUserRepository.findAllBy(gatheringId, GatheringStatus.ACCEPT);
+        } else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
     }
 
     private User getUser() {
