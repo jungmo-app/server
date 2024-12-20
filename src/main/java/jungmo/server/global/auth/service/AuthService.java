@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.SignatureException;
 import io.lettuce.core.RedisException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jungmo.server.domain.dto.response.UserRegisterDto;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
@@ -36,7 +37,7 @@ public class AuthService {
     private final RedisService redisService;
 
     @Transactional
-    public void register(RegisterRequestDto request, HttpServletResponse response) {
+    public UserRegisterDto register(RegisterRequestDto request, HttpServletResponse response) {
         // 비밀번호 암호화 후 UserService에 위임하여 사용자 생성
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = userService.createUser(request, encodedPassword);
@@ -53,6 +54,9 @@ public class AuthService {
         //  Access Token과 Refresh Token을 쿠키에 저장
         addCookie(response, "accessToken", accessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
         addCookie(response, "refreshToken", refreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
+
+        UserRegisterDto userRegisterDto = new UserRegisterDto(user.getId(), user.getUserCode());
+        return userRegisterDto;
     }
 
     private void  saveAuthentication(User user) {

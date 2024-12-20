@@ -90,18 +90,17 @@ public class GatheringUserService {
     }
 
     @Transactional
-    public void export(Long gatheringId, Long gatheringUserId) {
+    public void export(Long gatheringId, Long user_id) {
         User user = getUser();
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() ->
                 new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
 
         if (gatheringUser.isPresent()) {
-            GatheringUser exportedUser = gatheringUserRepository.findById(gatheringUserId).orElseThrow(
-                    () -> new BusinessException(ErrorCode.GATHERING_USER_NOT_EXISTS)
-            );
-            if (exportedUser.getGathering() == gathering && exportedUser.getStatus() == GatheringStatus.ACCEPT) {
-                exportedUser.removeGathering(gathering);
+            Optional<GatheringUser> exportedUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user_id, gatheringId);
+
+            if (exportedUser.get().getStatus() == GatheringStatus.ACCEPT) {
+                exportedUser.get().removeGathering(gathering);
             }
             else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
         } else throw new BusinessException(ErrorCode.NO_AUTHORITY);
