@@ -18,7 +18,9 @@ public enum ResultCode {
     GET_GATHERING(200, "G003", "모임 조회 완료"),
     GET_MY_ALL_GATHERINGS(200, "G004", "나의 모든 모임 조회 완료"),
     DELETE_GATHERING(200, "G005", "모임 삭제 완료"),
-    INVITE_USER_SUCCESS(200, "G006", "모임 초대 완료");
+    INVITE_USER_SUCCESS(200, "G006", "모임 초대 완료"),
+    ACCEPT_INVITATION(200, "G007", "모임의 초대 수락 완료"),
+    REJECT_INVITATION(200, "G008", "모임의 초대 거절 완료");
 
     private int status;
     private final String code;

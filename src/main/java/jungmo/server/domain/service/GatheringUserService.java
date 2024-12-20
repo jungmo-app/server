@@ -57,6 +57,28 @@ public class GatheringUserService {
         return savedUser;
     }
 
+    @Transactional
+    public void acceptInvitation(Long gatheringId) {
+        User user = getUser();
+        Optional<GatheringUser> pendingUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
+        if (pendingUser.isPresent()) {
+            if (pendingUser.get().getStatus() == GatheringStatus.PENDING) {
+                pendingUser.get().setStatus(GatheringStatus.ACCEPT);
+            } else throw new BusinessException(ErrorCode.ALREADY_CHOOSE);
+        } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
+    }
+
+    @Transactional
+    public void rejectInvitation(Long gatheringId) {
+        User user = getUser();
+        Optional<GatheringUser> pendingUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
+        if (pendingUser.isPresent()) {
+            if (pendingUser.get().getStatus() == GatheringStatus.PENDING) {
+                pendingUser.get().setStatus(GatheringStatus.REJECT);
+            } else throw new BusinessException(ErrorCode.ALREADY_CHOOSE);
+        } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
+    }
+
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
