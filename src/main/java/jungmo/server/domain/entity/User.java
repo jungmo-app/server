@@ -51,7 +51,7 @@ public class User extends BaseTimeEntity {
 
     public UserDto toDto() {
         UserDto userDto = new UserDto();
-        userDto.setId(this.getId());
+        userDto.setUserId(this.getId());
         userDto.setUserCode(this.getUserCode());
         userDto.setUserName(this.getUserName());
         userDto.setProfileImage(this.getProfileImage());
