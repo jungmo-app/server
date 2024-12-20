@@ -1,6 +1,7 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
+import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.global.auditing.BaseTimeEntity;
 import lombok.*;
 import org.w3c.dom.stylesheets.LinkStyle;
@@ -46,5 +47,14 @@ public class User extends BaseTimeEntity {
         this.profileImage = profileImage;
         this.provider = provider;
         this.gatheringUserList = gatheringUserList != null ? gatheringUserList : new ArrayList<>();
+    }
+
+    public UserDto toDto() {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(this.getId());
+        userDto.setUserCode(this.getUserCode());
+        userDto.setUserName(this.getUserName());
+        userDto.setProfileImage(this.getProfileImage());
+        return userDto;
     }
 }

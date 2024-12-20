@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(400, "C006", "Invalid or expired refresh token"),
     AUTHENTICATION_FAILED(400, "C007", "인증에 실패하였습니다"),
     EMAIL_ALREADY_EXISTS(400, "C008", "이미 존재하는 이메일 입니다"),
+    USER_NOT_EXISTS(400, "C009", "존재하지 않는 회원입니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),
@@ -26,7 +27,15 @@ public enum ErrorCode {
     //Gathering
     GATHERING_NOT_EXISTS(404,"G001","gathering does not exists"),
     NOT_HAVE_WRITE_AUTHORITY(404, "G002", "모임을 수정 할 수 있는 권한이 없습니다."),
-    GATHERING_ALREADY_DELETED(404,"G003","이미 삭제된 모임입니다.");
+    GATHERING_ALREADY_DELETED(404,"G003","이미 삭제된 모임입니다."),
+    NO_AUTHORITY(404, "G004", "모임을 수정할 수 있는 권한이 없습니다."),
+    ALREADY_CHOOSE(404, "G005", "이미 모임의 참석자이거나 거절한 모임입니다."),
+    INVITATION_NOT_EXISTS(404, "G006", "수락 할 초대가 존재하지 않습니다."),
+
+
+    //GatheringUser
+    NOT_A_GATHERING_USER(404, "G007", "모임에 포함되지 않은 유저입니다."),
+    GATHERING_USER_NOT_EXISTS(404, "G008", "해당 모임참석자가 존재하지 않습니다.");
 
 
     private int status;

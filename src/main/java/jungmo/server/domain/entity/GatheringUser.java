@@ -25,6 +25,10 @@ public class GatheringUser extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public void setStatus(GatheringStatus status) {
+        this.status = status;
+    }
+
     @Builder
     public GatheringUser(Long id, Authority authority, GatheringStatus status, Gathering gathering, User user) {
         this.id = id;

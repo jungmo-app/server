@@ -1,5 +1,7 @@
 package jungmo.server.domain.service;
 
+import jungmo.server.domain.dto.request.UserCodeDto;
+import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
@@ -19,6 +21,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+
+    public UserDto getUser(UserCodeDto userCode) {
+        User user = userRepository.findByUserCode(userCode.getUserCode())
+                .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
+        UserDto dto = user.toDto();
+        return dto;
+    }
+
 
     @Transactional
     public User createUser(RegisterRequestDto request, String encodedPassword) {
