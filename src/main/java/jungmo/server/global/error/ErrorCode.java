@@ -27,7 +27,8 @@ public enum ErrorCode {
     //Gathering
     GATHERING_NOT_EXISTS(404,"G001","gathering does not exists"),
     NOT_HAVE_WRITE_AUTHORITY(404, "G002", "모임을 수정 할 수 있는 권한이 없습니다."),
-    GATHERING_ALREADY_DELETED(404,"G003","이미 삭제된 모임입니다.");
+    GATHERING_ALREADY_DELETED(404,"G003","이미 삭제된 모임입니다."),
+    NO_AUTHORITY(404, "G004", "모임을 수정할 수 있는 권한이 없습니다.");
 
 
     private int status;

@@ -8,7 +8,6 @@ import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +29,7 @@ public class UserService {
         UserDto dto = user.toDto();
         return dto;
     }
+
 
     @Transactional
     public User createUser(RegisterRequestDto request, String encodedPassword) {
