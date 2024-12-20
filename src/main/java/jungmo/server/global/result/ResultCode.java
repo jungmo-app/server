@@ -10,6 +10,7 @@ public enum ResultCode {
     REGISTER_SUCCESS(200,"U001","회원가입 완료"),
     LOGIN_SUCCESS(200, "U002", "로그인 완료"),
     REFRESH_SUCCESS(200, "U003", "토큰 재발급 완료"),
+    GET_USER_SUCCESS(200, "U004", "유저 조회 완료"),
 
     //Gathering
     REGISTER_GATHERING(200,"G001","모임 생성 완료"),
