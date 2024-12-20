@@ -50,8 +50,8 @@ public class GatheringUserController {
     }
     @PostMapping("/{gathering_id}/{user_id}/del")
     @Operation(summary = "모임참석자 내보내는 API", description = "write권한이있는 유저가 모임참석자를 내보내는 API")
-    public ResultDetailResponse<Void> exportUser(@PathVariable Long gathering_id,@PathVariable Long gathering_user_id) {
-        gatheringUserService.export(gathering_id, gathering_user_id);
+    public ResultDetailResponse<Void> exportUser(@PathVariable Long gathering_id,@PathVariable Long user_id) {
+        gatheringUserService.export(gathering_id, user_id);
         return new ResultDetailResponse<>(ResultCode.EXPORT_SUCCESS, null);
     }
 }
