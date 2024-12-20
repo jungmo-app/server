@@ -45,7 +45,13 @@ public class GatheringUserController {
     @GetMapping("/{gathering_id}/userList")
     @Operation(summary = "모임참석자 모두 조회 API", description = "모임에 속해있는 참석자들을 모두 조회하는 API")
     public ResultListResponse<UserDto> getParticipantList(@PathVariable Long gathering_id) {
-        List<UserDto> users = gatheringUserService.getUsers(gathering_id);
+        List<UserDto> users = gatheringUserService.getGatheringUsers(gathering_id);
         return new ResultListResponse<>(ResultCode.GET_ALL_GATHERING_USERS, users);
+    }
+    @PostMapping("/{gathering_id}/{gathering_user_id}/del")
+    @Operation(summary = "모임참석자 내보내는 API", description = "write권한이있는 유저가 모임참석자를 내보내는 API")
+    public ResultDetailResponse<Void> exportUser(@PathVariable Long gathering_id,@PathVariable Long gathering_user_id) {
+        gatheringUserService.export(gathering_id, gathering_user_id);
+        return new ResultDetailResponse<>(ResultCode.EXPORT_SUCCESS, null);
     }
 }

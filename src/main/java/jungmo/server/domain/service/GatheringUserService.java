@@ -81,12 +81,30 @@ public class GatheringUserService {
         } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
     }
 
-    public List<UserDto> getUsers(Long gatheringId) {
+    public List<UserDto> getGatheringUsers(Long gatheringId) {
         User user = getUser();
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
         if (gatheringUser.isPresent()) {
             return gatheringUserRepository.findAllBy(gatheringId, GatheringStatus.ACCEPT);
         } else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
+    }
+
+    @Transactional
+    public void export(Long gatheringId, Long gatheringUserId) {
+        User user = getUser();
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() ->
+                new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
+        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
+
+        if (gatheringUser.isPresent()) {
+            GatheringUser exportedUser = gatheringUserRepository.findById(gatheringUserId).orElseThrow(
+                    () -> new BusinessException(ErrorCode.GATHERING_USER_NOT_EXISTS)
+            );
+            if (exportedUser.getGathering() == gathering && exportedUser.getStatus() == GatheringStatus.ACCEPT) {
+                exportedUser.removeGathering(gathering);
+            }
+            else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
+        } else throw new BusinessException(ErrorCode.NO_AUTHORITY);
     }
 
     private User getUser() {
