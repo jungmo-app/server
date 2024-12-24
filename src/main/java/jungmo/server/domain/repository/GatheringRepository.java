@@ -16,7 +16,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long> {
     "join g.gatheringUsers gu " +
     "where gu.user.id = :userId and gu.status = :status " +
             "and g.isDeleted = false " +
-            "and g.startDate <= CURRENT_DATE " +
-            "and g.endDate >= CURRENT_DATE")
+            "and (g.startDate >= CURRENT_DATE or g.endDate >= CURRENT_DATE)")
     List<GatheringListResponseDto> findAllByUserId(@Param("userId") Long userId, @Param("status") GatheringStatus status);
 }
