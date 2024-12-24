@@ -2,8 +2,10 @@ package jungmo.server.domain.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class UserCodeDto {
 
     @NotBlank

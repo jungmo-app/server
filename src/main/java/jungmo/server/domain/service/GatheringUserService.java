@@ -1,5 +1,7 @@
 package jungmo.server.domain.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jungmo.server.domain.dto.request.GatheringUserDto;
 import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.*;
@@ -53,7 +55,7 @@ public class GatheringUserService {
         validateUsers(usersToUpdate, userIds);
 
         // 추가 또는 삭제 대상 검증
-        List<GatheringUser> existingGatheringUsers = gatheringUserRepository.findByGathering_IdAndUser_IdIn(gatheringId, userIds);
+        List<GatheringUser> existingGatheringUsers = gatheringUserRepository.findByGatheringId(gatheringId);
         Set<Long> existingUserIds = existingGatheringUsers.stream()
                 .map(gu -> gu.getUser().getId())
                 .collect(Collectors.toSet());
@@ -63,12 +65,12 @@ public class GatheringUserService {
         newUserIds.removeAll(existingUserIds);
 
         // 삭제 대상
-        Set<Long> removedUserIds = new HashSet<>(existingUserIds);
-        removedUserIds.removeAll(userIds);
+        Set<Long> removedUserIds = new HashSet<>(existingUserIds);  //현재 모임에 존재하는 유저들
+        removedUserIds.removeAll(userIds);  //업데이트 될 유저들 중 현재 존재하는 유저들
+        removedUserIds.remove(writeUser.getId()); //현재 모임을 수정하는 유저
 
-        addUsersToGathering(gathering, newUserIds);
         removeUsersFromGathering(existingGatheringUsers, removedUserIds);
-
+        addUsersToGathering(gathering, newUserIds);
     }
 
     @Transactional
@@ -92,12 +94,14 @@ public class GatheringUserService {
         List<GatheringUser> gatheringUsersToRemove = existingGatheringUsers.stream()
                 .filter(gu -> removedUserIds.contains(gu.getUser().getId()))
                 .toList();
+
         // 2. 연관 관계 해제
         gatheringUsersToRemove.forEach(gu -> {
+            System.out.println("삭제 대상 GatheringUser ID: " + gu.getId());
             gu.removeUser(gu.getUser()); // User와의 연관 관계 해제
             gu.removeGathering(gu.getGathering()); // Gathering과의 연관 관계 해제
         });
-        gatheringUserRepository.deleteAll(gatheringUsersToRemove); // Batch 삭제
+        //gatheringUserRepository.deleteAll(gatheringUsersToRemove); // Batch 삭제
     }
 
     /**

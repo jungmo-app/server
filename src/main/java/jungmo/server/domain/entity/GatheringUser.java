@@ -19,10 +19,10 @@ public class GatheringUser extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GatheringStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gathering_id", nullable = false)
+    @JoinColumn(name = "gathering_id")
     private Gathering gathering;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public void setStatus(GatheringStatus status) {
