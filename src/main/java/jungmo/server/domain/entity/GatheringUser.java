@@ -41,9 +41,10 @@ public class GatheringUser extends BaseTimeEntity {
     /**
      * 연관관계 편의메서드
      */
-    public void setUser(User user) {
+    public GatheringUser setUser(User user) {
         this.user = user;
         user.getGatheringUserList().add(this);
+        return this;
     }
 
     public void removeUser(User user) {
@@ -53,9 +54,10 @@ public class GatheringUser extends BaseTimeEntity {
         }
     }
 
-    public void setGathering(Gathering gathering) {
+    public GatheringUser setGathering(Gathering gathering) {
         this.gathering = gathering;
         gathering.getGatheringUsers().add(this);
+        return this;
     }
 
     public void removeGathering(Gathering gathering) {

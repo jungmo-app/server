@@ -57,7 +57,6 @@ public class Gathering {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .startTime(this.startTime)
-                .isConnected(this.isConnected)
                 .memo(this.memo)
                 .build();
 

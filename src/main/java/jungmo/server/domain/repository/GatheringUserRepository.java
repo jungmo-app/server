@@ -20,6 +20,7 @@ public interface GatheringUserRepository extends JpaRepository<GatheringUser,Lon
     Optional<GatheringUser> findByAuthority(@Param("user") User user, @Param("gathering") Gathering gathering, @Param("authority") Authority authority);
 
     Optional<GatheringUser> findGatheringUserByUserIdAndGatheringId(@Param("user_id") Long userId, @Param("gathering_id") Long gatheringId);
+    List<GatheringUser> findByGathering_IdAndUser_IdIn(Long gathering_id,List<Long> user_ids);
 
     @Query("select new jungmo.server.domain.dto.response.UserDto(u.id,u.userCode,u.userName,u.profileImage) " +
             "from GatheringUser gu " +

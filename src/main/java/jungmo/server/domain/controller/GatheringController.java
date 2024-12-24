@@ -27,15 +27,11 @@ import java.util.List;
 public class GatheringController {
 
     private final GatheringService gatheringService;
-    private final GatheringUserService gatheringUserService;
 
-    @PostMapping("/{user_id}/save")
+    @PostMapping("/save")
     @Operation(summary = "모임생성 API", description = "모임을 생성하는 API, 모임을 만든사람은 write 권한을 갖는다.")
-    public ResultDetailResponse<String> saveGathering(@PathVariable Long user_id ,
-                                                      @RequestBody @Valid GatheringDto gatheringDto) {
+    public ResultDetailResponse<String> saveGathering(@RequestBody @Valid GatheringDto gatheringDto) {
         Gathering gathering = gatheringService.saveGathering(gatheringDto);
-        GatheringUserDto gatheringUserDto = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
-        gatheringUserService.saveGatheringUser(user_id,gatheringUserDto,gathering);
         return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(gathering.getId()));
     }
 

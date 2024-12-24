@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class GatheringDto {
@@ -19,12 +20,14 @@ public class GatheringDto {
     @NotNull(message = "시작시간을 입력해주세요.")
     private LocalTime startTime;
     private String memo;
+    private List<Long> userIds;
 
-    public GatheringDto(String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo) {
+    public GatheringDto(String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<Long> userIds) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
         this.memo = memo;
+        this.userIds = userIds;
     }
 }

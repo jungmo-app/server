@@ -13,18 +13,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gathering")
+@RequestMapping("/user")
 @Tag(name = "User", description = "사용자 관련 API")
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/user/search")
+    @GetMapping("/search")
     public ResultDetailResponse<UserDto> searchUser(@RequestBody @Valid UserCodeDto userCodeDto) {
-        UserDto user = userService.getUser(userCodeDto);
+        UserDto user = userService.findUser(userCodeDto);
         return new ResultDetailResponse<>(ResultCode.GET_USER_SUCCESS, user);
     }
 
-
+    @GetMapping("/info")
+    public ResultDetailResponse<UserDto> getUser() {
+        UserDto userInfo = userService.getUserInfo();
+        return new ResultDetailResponse<>(ResultCode.GET_MY_INFO_SUCCESS, userInfo);
+    }
 
 }

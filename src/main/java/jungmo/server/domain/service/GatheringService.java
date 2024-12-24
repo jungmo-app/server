@@ -1,8 +1,10 @@
 package jungmo.server.domain.service;
 
 import jungmo.server.domain.dto.request.GatheringDto;
+import jungmo.server.domain.dto.request.GatheringUserDto;
 import jungmo.server.domain.dto.response.GatheringListResponseDto;
 import jungmo.server.domain.dto.response.GatheringResponseDto;
+import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
@@ -19,8 +21,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -31,9 +35,11 @@ public class GatheringService {
     private final GatheringRepository gatheringRepository;
     private final UserRepository userRepository;
     private final GatheringUserRepository gatheringUserRepository;
+    private final GatheringUserService gatheringUserService;
 
     @Transactional
     public Gathering saveGathering(GatheringDto dto) {
+        //모임 생성
         Gathering gathering = Gathering.builder()
                 .title(dto.getTitle())
                 .startDate(dto.getStartDate())
@@ -45,6 +51,13 @@ public class GatheringService {
                 .isDeleted(false)
                 .build();
         Gathering savedGathering = gatheringRepository.save(gathering);
+        //모임을 만든사람과 매핑
+        GatheringUserDto gatheringUserDto = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
+        User user = getUser();
+        gatheringUserService.saveGatheringUser(user.getId(),gatheringUserDto,savedGathering);
+        //초대 된 사람들과의 매핑
+        Set<Long> userIds = new HashSet<>(dto.getUserIds());
+        gatheringUserService.addUsersToGathering(savedGathering, userIds);
         return savedGathering;
     }
 
@@ -56,6 +69,7 @@ public class GatheringService {
         if (gatheringUser.isPresent()) {
             if (!gathering.getIsDeleted()) {
                 gathering.update(gatheringDto);
+                gatheringUserService.updateGatheringUsers(gatheringId,gatheringDto.getUserIds());
             } else {
                 throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
             }
@@ -107,6 +121,9 @@ public class GatheringService {
 
 
     public GatheringResponseDto toDto(Gathering gathering) {
-        return gathering.toDto();
+        GatheringResponseDto dto = gathering.toDto();
+        List<UserDto> gatheringUsers = gatheringUserService.getGatheringUsers(gathering.getId());
+        dto.setGatheringUsers(gatheringUsers);
+        return dto;
     }
 }

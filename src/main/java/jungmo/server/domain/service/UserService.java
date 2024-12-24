@@ -5,9 +5,14 @@ import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
+import jungmo.server.global.auth.dto.response.SecurityUserDto;
+import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +27,25 @@ public class UserService {
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-
-    public UserDto getUser(UserCodeDto userCode) {
+    /**
+     * 유저코드로 유저를 찾는 로직
+     * @param userCode
+     * @return
+     */
+    public UserDto findUser(UserCodeDto userCode) {
         User user = userRepository.findByUserCode(userCode.getUserCode())
                 .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
         UserDto dto = user.toDto();
         return dto;
+    }
+
+    /**
+     * 내 정보 조회하는 로직
+     * @return
+     */
+    public UserDto getUserInfo() {
+        User user = getUser();
+        return user.toDto();
     }
 
 
@@ -69,5 +87,16 @@ public class UserService {
             sb.append(CHARACTERS.charAt(index));
         }
         return sb.toString();
+    }
+
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        SecurityUserDto securityUser = SecurityUserDto.from(principalDetails);
+        Long userId = securityUser.getUserId();
+
+        // 데이터베이스에서 사용자 조회
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
     }
 }
