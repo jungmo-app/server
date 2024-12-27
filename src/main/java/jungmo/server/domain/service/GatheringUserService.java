@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GatheringUserService {
 
@@ -101,7 +100,7 @@ public class GatheringUserService {
             gu.removeUser(gu.getUser()); // User와의 연관 관계 해제
             gu.removeGathering(gu.getGathering()); // Gathering과의 연관 관계 해제
         });
-        //gatheringUserRepository.deleteAll(gatheringUsersToRemove); // Batch 삭제
+        gatheringUserRepository.deleteAll(gatheringUsersToRemove); //Batch 삭제
     }
 
     /**
@@ -173,38 +172,13 @@ public class GatheringUserService {
      * @param gatheringId
      * @return
      */
+    @Transactional(readOnly = true)
     public List<UserDto> getGatheringUsers(Long gatheringId) {
         User user = getUser();
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
         if (gatheringUser.isPresent()) {
             return gatheringUserRepository.findAllBy(gatheringId, GatheringStatus.ACCEPT);
         } else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
-    }
-
-    /**
-     * 모임 참석자 삭제 로직
-     * @param gatheringId
-     * @param user_id
-     */
-    @Transactional
-    public void removeUser(Long gatheringId, Long user_id) {
-        User user = getUser();
-        //모임
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() ->
-                new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
-        //현재 로그인 된 사용자가 권한이 있는 사용자인지 확인
-        GatheringUser gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NO_AUTHORITY));
-        User exportedUser = userRepository.findById(user_id).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
-
-        GatheringUser exportedGateringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user_id, gatheringId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_USER_NOT_EXISTS));
-        //연관관계 삭제
-        exportedGateringUser.removeGathering(gathering);
-        exportedGateringUser.removeUser(exportedUser);
-        //GatheringUser 삭제
-        gatheringUserRepository.delete(exportedGateringUser);
-
     }
 
     private User getUser() {

@@ -53,6 +53,7 @@ public class Gathering {
 
     public GatheringResponseDto toDto() {
         return GatheringResponseDto.builder()
+                .id(this.id)
                 .title(this.title)
                 .startDate(this.startDate)
                 .endDate(this.endDate)

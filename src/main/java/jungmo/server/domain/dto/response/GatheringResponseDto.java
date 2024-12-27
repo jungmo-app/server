@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class GatheringResponseDto {
 
+    private Long id;
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -19,7 +20,8 @@ public class GatheringResponseDto {
     private List<UserDto> gatheringUsers;
 
     @Builder
-    public GatheringResponseDto(String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserDto> gatheringUsers) {
+    public GatheringResponseDto(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserDto> gatheringUsers) {
+        this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

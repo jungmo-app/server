@@ -28,7 +28,6 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GatheringService {
 
@@ -94,6 +93,7 @@ public class GatheringService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Gathering findGathering(Long gatheringId) {
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
         if (gathering.getIsDeleted()) {
@@ -102,6 +102,7 @@ public class GatheringService {
         return gathering;
     }
 
+    @Transactional(readOnly = true)
     public List<GatheringListResponseDto> findMyGatherings() {
         User user = getUser();
         List<GatheringListResponseDto> allGatherings = gatheringRepository.findAllByUserId(user.getId(), GatheringStatus.ACCEPT);
