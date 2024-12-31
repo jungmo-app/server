@@ -53,7 +53,7 @@ public class GatheringController {
         return new ResultDetailResponse<>(ResultCode.GET_GATHERING, dto);
     }
 
-    @GetMapping("/list")
+    @GetMapping
     @Operation(summary = "모임 목록 조회 API" , description = "로그인 된 사용자에게 예정된 모임들을 모두 조회한다.")
     public ResultListResponse<GatheringListResponseDto> getMyGathering(){
         List<GatheringListResponseDto> myGatherings = gatheringService.findMyGatherings();
