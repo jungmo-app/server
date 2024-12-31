@@ -49,6 +49,14 @@ public class User extends BaseTimeEntity {
         this.gatheringUserList = gatheringUserList != null ? gatheringUserList : new ArrayList<>();
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public UserDto toDto() {
         UserDto userDto = new UserDto();
         userDto.setUserId(this.getId());
