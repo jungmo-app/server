@@ -1,10 +1,10 @@
 package jungmo.server.domain.service;
 
 import jungmo.server.domain.dto.request.LocationRequestDto;
+import jungmo.server.domain.dto.response.LocationResponseDto;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
-import jungmo.server.domain.repository.LocationRepository;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
 import jungmo.server.global.auth.service.PrincipalDetails;
@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 
 @Service
@@ -31,7 +31,7 @@ public class GatheringLocationService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void saveGatheringLocation(Long gatheringId, LocationRequestDto dto) {
+    public void saveGatheringLocation(Long gatheringId, LocationRequestDto dto, boolean isFirst) {
         User user = getUser();
         Gathering gathering = gatheringService.findGathering(gatheringId);
         validateWriteAuthority(user, gathering);
@@ -39,7 +39,7 @@ public class GatheringLocationService {
         GatheringLocation gatheringLocation = new GatheringLocation();
         gatheringLocation.setGathering(gathering);
         gatheringLocation.setLocation(location);
-        gatheringLocation.setFirstLocation(false);
+        gatheringLocation.setFirstLocation(isFirst);
         gatheringLocationRepository.save(gatheringLocation);
     }
 

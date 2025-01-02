@@ -22,7 +22,7 @@ public class GatheringLocationController {
     @Operation(summary = "모임장소 저장 API", description = "모임장소를 저장하는 api")
     public ResultDetailResponse<Void> saveLocation(@PathVariable Long gathering_id,
                                                    @RequestBody @Valid LocationRequestDto locationRequestDto) {
-        gatheringLocationService.saveGatheringLocation(gathering_id, locationRequestDto);
+        gatheringLocationService.saveGatheringLocation(gathering_id, locationRequestDto,false);
         return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING_LOCATION, null);
     }
 

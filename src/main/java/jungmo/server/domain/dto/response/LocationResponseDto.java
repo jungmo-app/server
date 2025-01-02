@@ -12,8 +12,9 @@ public class LocationResponseDto {
     private double longitude;
     private String placeId;
     private String category;
+    private boolean isFirst;
 
-    public LocationResponseDto(Long id, String name, String roadAddress, double latitude, double longitude, String placeId, String category) {
+    public LocationResponseDto(Long id, String name, String roadAddress, double latitude, double longitude, String placeId, String category, boolean isFirst) {
         this.id = id;
         this.name = name;
         this.roadAddress = roadAddress;
@@ -21,5 +22,6 @@ public class LocationResponseDto {
         this.longitude = longitude;
         this.placeId = placeId;
         this.category = category;
+        this.isFirst = isFirst;
     }
 }

@@ -4,8 +4,10 @@ import jungmo.server.domain.dto.request.GatheringDto;
 import jungmo.server.domain.dto.request.GatheringUserDto;
 import jungmo.server.domain.dto.response.GatheringListResponseDto;
 import jungmo.server.domain.dto.response.GatheringResponseDto;
+import jungmo.server.domain.dto.response.LocationResponseDto;
 import jungmo.server.domain.dto.response.UserDto;
 import jungmo.server.domain.entity.*;
+import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
 import jungmo.server.domain.repository.UserRepository;
@@ -25,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +38,7 @@ public class GatheringService {
     private final UserRepository userRepository;
     private final GatheringUserRepository gatheringUserRepository;
     private final GatheringUserService gatheringUserService;
+    private final GatheringLocationRepository gatheringLocationRepository;
 
     @Transactional
     public Gathering saveGathering(GatheringDto dto) {
@@ -109,6 +113,33 @@ public class GatheringService {
         return allGatherings;
     }
 
+    @Transactional(readOnly = true)
+    public GatheringResponseDto toDto(Gathering gathering) {
+        GatheringResponseDto dto = gathering.toDto();
+        // 모임 참석자 정보 가져오기
+        List<UserDto> gatheringUsers = gatheringUserService.getGatheringUsers(gathering.getId());
+        dto.setGatheringUsers(gatheringUsers);
+
+        // 모임 장소 정보 가져오기
+        List<LocationResponseDto> allLocations = gatheringLocationRepository.findAllByGatheringId(gathering.getId());
+
+        // 만나기로 한 장소와 나머지 장소 분리
+        LocationResponseDto meetingPlace = allLocations.stream()
+                .filter(LocationResponseDto::isFirst) // isFirstLocation == true 인 장소 필터링
+                .findFirst() // 첫 번째 장소만 가져옴
+                .orElse(null); // 없으면 null
+
+        List<LocationResponseDto> places = allLocations.stream()
+                .filter(location -> !location.isFirst()) // isFirstLocation == false 인 장소 필터링
+                .collect(Collectors.toList());
+
+        // DTO에 값 설정
+        dto.setMeetingPlace(meetingPlace);
+        dto.setPlaces(places);
+
+        return dto;
+    }
+
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -118,13 +149,5 @@ public class GatheringService {
         // 데이터베이스에서 사용자 조회
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-    }
-
-
-    public GatheringResponseDto toDto(Gathering gathering) {
-        GatheringResponseDto dto = gathering.toDto();
-        List<UserDto> gatheringUsers = gatheringUserService.getGatheringUsers(gathering.getId());
-        dto.setGatheringUsers(gatheringUsers);
-        return dto;
     }
 }

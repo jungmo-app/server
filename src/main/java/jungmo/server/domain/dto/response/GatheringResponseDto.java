@@ -18,9 +18,12 @@ public class GatheringResponseDto {
     private LocalTime startTime;
     private String memo;
     private List<UserDto> gatheringUsers;
+    private LocationResponseDto meetingPlace;
+    private List<LocationResponseDto> places;
+
 
     @Builder
-    public GatheringResponseDto(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserDto> gatheringUsers) {
+    public GatheringResponseDto(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserDto> gatheringUsers, LocationResponseDto meetingPlace, List<LocationResponseDto> places) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
@@ -28,5 +31,7 @@ public class GatheringResponseDto {
         this.startTime = startTime;
         this.memo = memo;
         this.gatheringUsers = gatheringUsers;
+        this.meetingPlace = meetingPlace;
+        this.places = places;
     }
 }
