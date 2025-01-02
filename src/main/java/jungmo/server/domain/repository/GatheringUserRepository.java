@@ -26,7 +26,7 @@ public interface GatheringUserRepository extends JpaRepository<GatheringUser,Lon
             "from GatheringUser gu " +
             "join gu.user u " +
             "join gu.gathering g " +
-            "where g.id = :gathering_id and gu.status = :status")
-    List<UserDto> findAllBy(@Param("gathering_id") Long gathering_id, @Param("status") GatheringStatus status);
+            "where g.id = :gathering_id")
+    List<UserDto> findAllBy(@Param("gathering_id") Long gathering_id);
 
 }

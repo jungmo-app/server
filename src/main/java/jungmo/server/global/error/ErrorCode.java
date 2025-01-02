@@ -17,6 +17,7 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(400, "C007", "인증에 실패하였습니다"),
     EMAIL_ALREADY_EXISTS(400, "C008", "이미 존재하는 이메일 입니다"),
     USER_NOT_EXISTS(400, "C009", "존재하지 않는 회원입니다."),
+    IMAGE_UPLOAD_FAIL(400, "C010", "프로필 이미지를 수정하는데 실패했습니다"),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),

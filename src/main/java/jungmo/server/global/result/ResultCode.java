@@ -24,8 +24,10 @@ public enum ResultCode {
     ACCEPT_INVITATION(200, "G007", "모임의 초대 수락 완료"),
     REJECT_INVITATION(200, "G008", "모임의 초대 거절 완료"),
     GET_ALL_GATHERING_USERS(200, "G009", "모임의 모든 참석자 조회 완료"),
-    EXPORT_SUCCESS(200, "G010", "모임의 참석자 내보내기 완료");
+    EXPORT_SUCCESS(200, "G010", "모임의 참석자 내보내기 완료"),
 
+    //GatheringLocation
+    REGISTER_GATHERING_LOCATION(200,"GL001","모임장소 저장 완료");
 
     private int status;
     private final String code;

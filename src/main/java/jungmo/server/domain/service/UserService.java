@@ -12,7 +12,6 @@ import jungmo.server.global.auth.service.S3Service;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final S3Service s3Service;
-
-    @Value("${cloud.aws.s3.default-profile-image}")
-    private String defaultProfileImage;
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -63,16 +59,15 @@ public class UserService {
     @Transactional
     public Long updateUserProfile(UserRequestDto userDto) throws IOException {
         User user = getUser();
-        // 프로필 이미지 처리
-        if (userDto.getProfileImage() != null) {
-            if (userDto.getProfileImage().isEmpty()) {
-                // 이미지 삭제 요청 → 기본 이미지 설정
-                user.setProfileImage(defaultProfileImage);
-            } else {
-                // 새로운 이미지 업로드
+        try {
+            if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
                 String profileImageUrl = s3Service.uploadFile(userDto.getProfileImage(), user.getId());
                 user.setProfileImage(profileImageUrl);
+            } else {
+                user.setProfileImage(null); // 이미지 삭제 요청
             }
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
         // 닉네임 수정
         user.setUserName(userDto.getUserName());
@@ -106,7 +101,6 @@ public class UserService {
                 .provider("email")
                 .role("ROLE_USER")
                 .userCode(uniqueCode) // 고유 코드 설정
-                .profileImage(defaultProfileImage) // 기본 프로필 이미지 설정
                 .build();
 
         return userRepository.save(user);

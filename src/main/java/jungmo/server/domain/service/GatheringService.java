@@ -51,7 +51,7 @@ public class GatheringService {
                 .build();
         Gathering savedGathering = gatheringRepository.save(gathering);
         //모임을 만든사람과 매핑
-        GatheringUserDto gatheringUserDto = new GatheringUserDto(Authority.WRITE, GatheringStatus.ACCEPT);
+        GatheringUserDto gatheringUserDto = new GatheringUserDto(Authority.WRITE);
         User user = getUser();
         gatheringUserService.saveGatheringUser(user.getId(),gatheringUserDto,savedGathering);
         //초대 된 사람들과의 매핑
@@ -105,7 +105,7 @@ public class GatheringService {
     @Transactional(readOnly = true)
     public List<GatheringListResponseDto> findMyGatherings() {
         User user = getUser();
-        List<GatheringListResponseDto> allGatherings = gatheringRepository.findAllByUserId(user.getId(), GatheringStatus.ACCEPT);
+        List<GatheringListResponseDto> allGatherings = gatheringRepository.findAllByUserId(user.getId());
         return allGatherings;
     }
 

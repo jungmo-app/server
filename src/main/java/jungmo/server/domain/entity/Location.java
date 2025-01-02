@@ -1,18 +1,13 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
 @Table(name = "location")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Location {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
@@ -30,4 +25,14 @@ public class Location {
     @Column(name = "location_category")
     private String category;
 
+    @Builder
+    public Location(Long id, String name, String roadAddress, double latitude, double longitude, String placeId, String category) {
+        this.id = id;
+        this.name = name;
+        this.roadAddress = roadAddress;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.placeId = placeId;
+        this.category = category;
+    }
 }

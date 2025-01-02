@@ -79,7 +79,6 @@ public class GatheringUserService {
         List<GatheringUser> newGatheringUsers = usersToInvite.stream()
                 .map(user -> GatheringUser.builder()
                         .authority(Authority.READ)
-                        .status(GatheringStatus.PENDING)
                         .build()
                         .setUser(user)
                         .setGathering(gathering))
@@ -129,42 +128,11 @@ public class GatheringUserService {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
         GatheringUser gatheringUser = GatheringUser.builder()
                 .authority(dto.getAuthority())
-                .status(dto.getStatus())
                 .build();
         //연관관계 매핑
         gatheringUser.setUser(user);
         gatheringUser.setGathering(gathering);
         return gatheringUserRepository.save(gatheringUser);
-    }
-
-    /**
-     * 초대 수락 로직
-     * @param gatheringId
-     */
-    @Transactional
-    public void acceptInvitation(Long gatheringId) {
-        User user = getUser();
-        Optional<GatheringUser> pendingUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
-        if (pendingUser.isPresent()) {
-            if (pendingUser.get().getStatus() == GatheringStatus.PENDING) {
-                pendingUser.get().setStatus(GatheringStatus.ACCEPT);
-            } else throw new BusinessException(ErrorCode.ALREADY_CHOOSE);
-        } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
-    }
-
-    /**
-     * 초대 거절 로직
-     * @param gatheringId
-     */
-    @Transactional
-    public void rejectInvitation(Long gatheringId) {
-        User user = getUser();
-        Optional<GatheringUser> pendingUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
-        if (pendingUser.isPresent()) {
-            if (pendingUser.get().getStatus() == GatheringStatus.PENDING) {
-                pendingUser.get().setStatus(GatheringStatus.REJECT);
-            } else throw new BusinessException(ErrorCode.ALREADY_CHOOSE);
-        } else throw new BusinessException(ErrorCode.INVITATION_NOT_EXISTS);
     }
 
     /**
@@ -177,7 +145,7 @@ public class GatheringUserService {
         User user = getUser();
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
         if (gatheringUser.isPresent()) {
-            return gatheringUserRepository.findAllBy(gatheringId, GatheringStatus.ACCEPT);
+            return gatheringUserRepository.findAllBy(gatheringId);
         } else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
     }
 
