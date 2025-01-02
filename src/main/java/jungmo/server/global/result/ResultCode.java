@@ -27,7 +27,8 @@ public enum ResultCode {
     EXPORT_SUCCESS(200, "G010", "모임의 참석자 내보내기 완료"),
 
     //GatheringLocation
-    REGISTER_GATHERING_LOCATION(200,"GL001","모임장소 저장 완료");
+    REGISTER_GATHERING_LOCATION(200,"GL001","모임장소 저장 완료"),
+    DELETE_GATHERING_LOCATION(200,"GL002","모임장소 삭제 완료");
 
     private int status;
     private final String code;

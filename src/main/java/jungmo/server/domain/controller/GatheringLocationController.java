@@ -26,5 +26,11 @@ public class GatheringLocationController {
         return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING_LOCATION, null);
     }
 
+    @DeleteMapping("/{gathering_id}/locations/{location_id}")
+    @Operation(summary = "모임 장소 삭제 API", description = "모임 장소를 삭제하는 api")
+    public ResultDetailResponse<Void> deleteLocation(@PathVariable Long gathering_id, @PathVariable Long location_id) {
+        gatheringLocationService.deleteGatheringLocation(gathering_id, location_id);
+        return new ResultDetailResponse<>(ResultCode.DELETE_GATHERING_LOCATION, null);
+    }
 
 }

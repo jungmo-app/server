@@ -36,9 +36,11 @@ public enum ErrorCode {
 
     //GatheringUser
     NOT_A_GATHERING_USER(404, "G007", "모임에 포함되지 않은 유저입니다."),
-    GATHERING_USER_NOT_EXISTS(404, "G008", "해당 모임참석자가 존재하지 않습니다.");
+    GATHERING_USER_NOT_EXISTS(404, "G008", "해당 모임참석자가 존재하지 않습니다."),
 
-
+    //GatheringLocation
+    GATHERING_LOCATION_NOT_EXISTS(404,"GL001","해당하는 모임장소가 존재하지 않습니다"),
+    INVALID_RELATION(404, "GL002", "해당 모임장소가 해당 모임에 포함되어 있지 않습니다.");
     private int status;
     private final String code;
     private final String message;
