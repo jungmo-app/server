@@ -16,8 +16,6 @@ public class GatheringUser extends BaseTimeEntity {
     private Long id;
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
-    @Enumerated(EnumType.STRING)
-    private GatheringStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
@@ -25,15 +23,10 @@ public class GatheringUser extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void setStatus(GatheringStatus status) {
-        this.status = status;
-    }
-
     @Builder
-    public GatheringUser(Long id, Authority authority, GatheringStatus status, Gathering gathering, User user) {
+    public GatheringUser(Long id, Authority authority, Gathering gathering, User user) {
         this.id = id;
         this.authority = authority;
-        this.status = status;
         this.gathering = gathering;
         this.user = user;
     }

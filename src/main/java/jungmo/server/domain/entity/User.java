@@ -1,10 +1,9 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
-import jungmo.server.domain.dto.response.UserDto;
+import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.global.auditing.BaseTimeEntity;
 import lombok.*;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +56,8 @@ public class User extends BaseTimeEntity {
         this.profileImage = profileImage;
     }
 
-    public UserDto toDto() {
-        UserDto userDto = new UserDto();
+    public UserResponse toDto() {
+        UserResponse userDto = new UserResponse();
         userDto.setUserId(this.getId());
         userDto.setUserCode(this.getUserCode());
         userDto.setUserName(this.getUserName());

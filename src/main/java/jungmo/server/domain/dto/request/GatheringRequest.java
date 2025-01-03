@@ -9,7 +9,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class GatheringDto {
+public class GatheringRequest {
 
     @NotBlank(message = "제목을 입력해주세요.")
     private String title;
@@ -19,14 +19,16 @@ public class GatheringDto {
     private LocalDate endDate;
     @NotNull(message = "시작시간을 입력해주세요.")
     private LocalTime startTime;
+    private LocationRequest meetingLocation;
     private String memo;
     private List<Long> userIds;
 
-    public GatheringDto(String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<Long> userIds) {
+    public GatheringRequest(String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocationRequest meetingLocation, String memo, List<Long> userIds) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
+        this.meetingLocation = meetingLocation;
         this.memo = memo;
         this.userIds = userIds;
     }

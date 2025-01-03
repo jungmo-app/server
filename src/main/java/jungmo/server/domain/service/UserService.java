@@ -1,8 +1,8 @@
 package jungmo.server.domain.service;
 
-import jungmo.server.domain.dto.request.UserCodeDto;
-import jungmo.server.domain.dto.request.UserRequestDto;
-import jungmo.server.domain.dto.response.UserDto;
+import jungmo.server.domain.dto.request.UserCodeRequest;
+import jungmo.server.domain.dto.request.UserRequest;
+import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
@@ -12,7 +12,6 @@ import jungmo.server.global.auth.service.S3Service;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final S3Service s3Service;
-
-    @Value("${cloud.aws.s3.default-profile-image}")
-    private String defaultProfileImage;
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -39,18 +35,18 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserDto findUser(UserCodeDto userCode) {
+    public UserResponse findUser(UserCodeRequest userCode) {
         User user = userRepository.findByUserCode(userCode.getUserCode())
                 .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserDto dto = user.toDto();
+        UserResponse dto = user.toDto();
         return dto;
     }
 
     @Transactional(readOnly = true)
-    public UserDto findUserById(Long userId) {
+    public UserResponse findUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserDto dto = user.toDto();
+        UserResponse dto = user.toDto();
         return dto;
     }
 
@@ -61,18 +57,17 @@ public class UserService {
      * @throws IOException
      */
     @Transactional
-    public Long updateUserProfile(UserRequestDto userDto) throws IOException {
+    public Long updateUserProfile(UserRequest userDto) throws IOException {
         User user = getUser();
-        // 프로필 이미지 처리
-        if (userDto.getProfileImage() != null) {
-            if (userDto.getProfileImage().isEmpty()) {
-                // 이미지 삭제 요청 → 기본 이미지 설정
-                user.setProfileImage(defaultProfileImage);
-            } else {
-                // 새로운 이미지 업로드
+        try {
+            if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
                 String profileImageUrl = s3Service.uploadFile(userDto.getProfileImage(), user.getId());
                 user.setProfileImage(profileImageUrl);
+            } else {
+                user.setProfileImage(null); // 이미지 삭제 요청
             }
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
         // 닉네임 수정
         user.setUserName(userDto.getUserName());
@@ -84,7 +79,7 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserDto getUserInfo() {
+    public UserResponse getUserInfo() {
         User user = getUser();
         return user.toDto();
     }
@@ -106,7 +101,6 @@ public class UserService {
                 .provider("email")
                 .role("ROLE_USER")
                 .userCode(uniqueCode) // 고유 코드 설정
-                .profileImage(defaultProfileImage) // 기본 프로필 이미지 설정
                 .build();
 
         return userRepository.save(user);

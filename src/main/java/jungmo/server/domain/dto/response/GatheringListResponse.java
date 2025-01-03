@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class GatheringListResponseDto {
+public class GatheringListResponse {
 
     private Long id;
     private String title;
@@ -14,7 +14,7 @@ public class GatheringListResponseDto {
     private LocalDate endDate;
     private LocalTime startTime;
 
-    public GatheringListResponseDto(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime) {
+    public GatheringListResponse(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;

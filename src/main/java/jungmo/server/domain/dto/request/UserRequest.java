@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class UserRequestDto {
+public class UserRequest {
 
     @NotBlank(message = "닉네임은 비어있을 수 없습니다.")
     private String userName;
