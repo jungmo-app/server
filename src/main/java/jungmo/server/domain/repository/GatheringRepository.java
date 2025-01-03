@@ -1,6 +1,6 @@
 package jungmo.server.domain.repository;
 
-import jungmo.server.domain.dto.response.GatheringListResponseDto;
+import jungmo.server.domain.dto.response.GatheringListResponse;
 import jungmo.server.domain.entity.Gathering;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface GatheringRepository extends JpaRepository<Gathering, Long> {
 
-    @Query("select new jungmo.server.domain.dto.response.GatheringListResponseDto(g.id,g.title,g.startDate,g.endDate,g.startTime) " +
+    @Query("select new jungmo.server.domain.dto.response.GatheringListResponse(g.id,g.title,g.startDate,g.endDate,g.startTime) " +
             "from Gathering g " +
             "join g.gatheringUsers gu " +
             "join gu.user u " +
             "where u.id = :userId " +
             "and g.isDeleted = false " +
             "and (g.startDate >= CURRENT_DATE or g.endDate >= CURRENT_DATE)")
-    List<GatheringListResponseDto> findAllByUserId(@Param("userId") Long userId);
+    List<GatheringListResponse> findAllByUserId(@Param("userId") Long userId);
 }

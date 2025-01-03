@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class LocationRequestDto {
+public class LocationRequest {
     @NotBlank(message = "장소의 이름을 입력해주세요.")
     @Size(max = 100, message = "장소의 이름은 최대 100자까지 가능합니다.")
     private String name;

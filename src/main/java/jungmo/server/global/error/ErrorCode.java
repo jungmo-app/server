@@ -18,6 +18,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(400, "C008", "이미 존재하는 이메일 입니다"),
     USER_NOT_EXISTS(400, "C009", "존재하지 않는 회원입니다."),
     IMAGE_UPLOAD_FAIL(400, "C010", "프로필 이미지를 수정하는데 실패했습니다"),
+    USER_INVALID(400, "C011", "존재하지 않는 회원이 있습니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),
@@ -37,10 +38,14 @@ public enum ErrorCode {
     //GatheringUser
     NOT_A_GATHERING_USER(404, "G007", "모임에 포함되지 않은 유저입니다."),
     GATHERING_USER_NOT_EXISTS(404, "G008", "해당 모임참석자가 존재하지 않습니다."),
+    CANNOT_INVITE_SELF(404, "G009", "자기자신은 초대할 수 없습니다."),
 
     //GatheringLocation
     GATHERING_LOCATION_NOT_EXISTS(404,"GL001","해당하는 모임장소가 존재하지 않습니다"),
-    INVALID_RELATION(404, "GL002", "해당 모임장소가 해당 모임에 포함되어 있지 않습니다.");
+    INVALID_RELATION(404, "GL002", "해당 모임장소가 해당 모임에 포함되어 있지 않습니다."),
+
+    //Location
+    LOCATION_NOT_EXISTS(404,"L001","해당하는 장소가 존재하지 않습니다");
     private int status;
     private final String code;
     private final String message;

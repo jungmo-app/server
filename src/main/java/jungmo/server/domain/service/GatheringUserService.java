@@ -1,9 +1,7 @@
 package jungmo.server.domain.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jungmo.server.domain.dto.request.GatheringUserDto;
-import jungmo.server.domain.dto.response.UserDto;
+import jungmo.server.domain.dto.request.GatheringUserRequest;
+import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.*;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
@@ -75,6 +73,15 @@ public class GatheringUserService {
     @Transactional
     public void addUsersToGathering(Gathering gathering, Set<Long> newUserIds) {
         List<User> usersToInvite = userRepository.findAllById(newUserIds);
+        User currentUser = getUser();
+
+        if (usersToInvite.size() != newUserIds.size()) {
+            throw new BusinessException(ErrorCode.USER_INVALID);
+        }
+
+        if (newUserIds.contains(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.CANNOT_INVITE_SELF);
+        }
 
         List<GatheringUser> newGatheringUsers = usersToInvite.stream()
                 .map(user -> GatheringUser.builder()
@@ -122,7 +129,7 @@ public class GatheringUserService {
      * @return
      */
     @Transactional
-    public GatheringUser saveGatheringUser(Long userId, GatheringUserDto dto,Gathering gathering) {
+    public GatheringUser saveGatheringUser(Long userId, GatheringUserRequest dto, Gathering gathering) {
         //모임유저 생성
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
@@ -141,7 +148,7 @@ public class GatheringUserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<UserDto> getGatheringUsers(Long gatheringId) {
+    public List<UserResponse> getGatheringUsers(Long gatheringId) {
         User user = getUser();
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
         if (gatheringUser.isPresent()) {

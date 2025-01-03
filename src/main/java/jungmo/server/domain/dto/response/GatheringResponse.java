@@ -1,6 +1,5 @@
 package jungmo.server.domain.dto.response;
 
-import jungmo.server.domain.dto.request.GatheringUserDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +8,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class GatheringResponseDto {
+public class GatheringResponse {
 
     private Long id;
     private String title;
@@ -17,13 +16,13 @@ public class GatheringResponseDto {
     private LocalDate endDate;
     private LocalTime startTime;
     private String memo;
-    private List<UserDto> gatheringUsers;
-    private LocationResponseDto meetingPlace;
-    private List<LocationResponseDto> places;
+    private List<UserResponse> gatheringUsers;
+    private LocationResponse meetingLocation;
+    private List<LocationResponse> Locations;
 
 
     @Builder
-    public GatheringResponseDto(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserDto> gatheringUsers, LocationResponseDto meetingPlace, List<LocationResponseDto> places) {
+    public GatheringResponse(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, List<UserResponse> gatheringUsers, LocationResponse meetingLocation, List<LocationResponse> Locations) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
@@ -31,7 +30,7 @@ public class GatheringResponseDto {
         this.startTime = startTime;
         this.memo = memo;
         this.gatheringUsers = gatheringUsers;
-        this.meetingPlace = meetingPlace;
-        this.places = places;
+        this.meetingLocation = meetingLocation;
+        this.Locations = Locations;
     }
 }

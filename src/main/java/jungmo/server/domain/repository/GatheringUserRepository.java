@@ -1,7 +1,6 @@
 package jungmo.server.domain.repository;
 
-import jungmo.server.domain.dto.response.GatheringListResponseDto;
-import jungmo.server.domain.dto.response.UserDto;
+import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,11 +21,11 @@ public interface GatheringUserRepository extends JpaRepository<GatheringUser,Lon
     Optional<GatheringUser> findGatheringUserByUserIdAndGatheringId(@Param("user_id") Long userId, @Param("gathering_id") Long gatheringId);
     List<GatheringUser> findByGatheringId(Long gatheringId);
 
-    @Query("select new jungmo.server.domain.dto.response.UserDto(u.id,u.userCode,u.userName,u.profileImage) " +
+    @Query("select new jungmo.server.domain.dto.response.UserResponse(u.id,u.userCode,u.userName,u.profileImage) " +
             "from GatheringUser gu " +
             "join gu.user u " +
             "join gu.gathering g " +
             "where g.id = :gathering_id")
-    List<UserDto> findAllBy(@Param("gathering_id") Long gathering_id);
+    List<UserResponse> findAllBy(@Param("gathering_id") Long gathering_id);
 
 }

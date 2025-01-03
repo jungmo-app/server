@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserCodeDto {
+public class UserCodeRequest {
 
     @NotBlank
     private String userCode;
 
-    public UserCodeDto(String userCode) {
+    public UserCodeRequest(String userCode) {
         this.userCode = userCode;
     }
 }

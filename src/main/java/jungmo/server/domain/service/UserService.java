@@ -1,8 +1,8 @@
 package jungmo.server.domain.service;
 
-import jungmo.server.domain.dto.request.UserCodeDto;
-import jungmo.server.domain.dto.request.UserRequestDto;
-import jungmo.server.domain.dto.response.UserDto;
+import jungmo.server.domain.dto.request.UserCodeRequest;
+import jungmo.server.domain.dto.request.UserRequest;
+import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
@@ -35,18 +35,18 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserDto findUser(UserCodeDto userCode) {
+    public UserResponse findUser(UserCodeRequest userCode) {
         User user = userRepository.findByUserCode(userCode.getUserCode())
                 .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserDto dto = user.toDto();
+        UserResponse dto = user.toDto();
         return dto;
     }
 
     @Transactional(readOnly = true)
-    public UserDto findUserById(Long userId) {
+    public UserResponse findUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserDto dto = user.toDto();
+        UserResponse dto = user.toDto();
         return dto;
     }
 
@@ -57,7 +57,7 @@ public class UserService {
      * @throws IOException
      */
     @Transactional
-    public Long updateUserProfile(UserRequestDto userDto) throws IOException {
+    public Long updateUserProfile(UserRequest userDto) throws IOException {
         User user = getUser();
         try {
             if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
@@ -79,7 +79,7 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserDto getUserInfo() {
+    public UserResponse getUserInfo() {
         User user = getUser();
         return user.toDto();
     }

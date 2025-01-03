@@ -1,6 +1,7 @@
 package jungmo.server.domain.entity;
 
 import jakarta.persistence.*;
+import jungmo.server.domain.dto.request.LocationRequest;
 import lombok.*;
 
 @Getter
@@ -10,19 +11,19 @@ import lombok.*;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "location_id")
+    @Column(name = "id")
     private Long id;
-    @Column(name = "location_name")
+    @Column(name = "name")
     private String name;
-    @Column(name = "location_road_address")
+    @Column(name = "road_address")
     private String roadAddress;
-    @Column(name = "location_latitude")
+    @Column(name = "latitude")
     private double latitude;
-    @Column(name = "location_longtitude")
+    @Column(name = "longitude")
     private double longitude;
-    @Column(name = "location_place_id")
+    @Column(name = "place_id")
     private String placeId;
-    @Column(name = "location_category")
+    @Column(name = "category")
     private String category;
 
     @Builder
@@ -35,4 +36,14 @@ public class Location {
         this.placeId = placeId;
         this.category = category;
     }
+
+    public void update(LocationRequest request) {
+        this.name = request.getName();
+        this.roadAddress = request.getRoadAddress();
+        this.latitude = request.getLatitude();
+        this.longitude = request.getLongitude();
+        this.placeId = request.getPlaceId();
+        this.category = request.getCategory();
+    }
+
 }

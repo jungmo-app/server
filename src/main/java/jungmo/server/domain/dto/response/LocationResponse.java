@@ -1,9 +1,10 @@
 package jungmo.server.domain.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-public class LocationResponseDto {
+public class LocationResponse {
 
     private Long id;
     private String name;
@@ -12,9 +13,10 @@ public class LocationResponseDto {
     private double longitude;
     private String placeId;
     private String category;
+    @JsonIgnore
     private boolean isFirst;
 
-    public LocationResponseDto(Long id, String name, String roadAddress, double latitude, double longitude, String placeId, String category, boolean isFirst) {
+    public LocationResponse(Long id, String name, String roadAddress, double latitude, double longitude, String placeId, String category, boolean isFirst) {
         this.id = id;
         this.name = name;
         this.roadAddress = roadAddress;

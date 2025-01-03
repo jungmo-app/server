@@ -21,7 +21,7 @@ public class GatheringLocation {
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gathering_location_id")
+    @JoinColumn(name = "location_id")
     private Location location;
 
     public void setFirstLocation(boolean firstLocation) {
@@ -45,9 +45,7 @@ public class GatheringLocation {
     }
 
     public void removeLocation(Location location) {
-        if (this.location != null) {
             this.location = null;
-        }
     }
 
 
