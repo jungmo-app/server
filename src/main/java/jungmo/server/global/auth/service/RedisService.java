@@ -25,8 +25,4 @@ public class RedisService {
         String storedToken = (String) redisTemplate.opsForValue().get(email);
         return storedToken != null && storedToken.equals(refreshToken);
     }
-
-    public void deleteRefreshToken(String email) {
-        redisTemplate.delete(email);
-    }
 }
