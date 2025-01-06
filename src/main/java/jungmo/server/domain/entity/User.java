@@ -48,6 +48,9 @@ public class User extends BaseTimeEntity {
         this.gatheringUserList = gatheringUserList != null ? gatheringUserList : new ArrayList<>();
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
     public void setUserName(String userName) {
         this.userName = userName;
     }

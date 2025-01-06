@@ -19,6 +19,8 @@ public enum ErrorCode {
     USER_NOT_EXISTS(400, "C009", "존재하지 않는 회원입니다."),
     IMAGE_UPLOAD_FAIL(400, "C010", "프로필 이미지를 수정하는데 실패했습니다"),
     USER_INVALID(400, "C011", "존재하지 않는 회원이 있습니다."),
+    PASSWORD_NOT_MATCH(400, "C012", "현재 비밀번호가 일치하지 않습니다."),
+    INVALID_PASSWORD(400, "C013", "새로운 비밀번호는 기존 비밀번호와 동일할 수 없습니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),

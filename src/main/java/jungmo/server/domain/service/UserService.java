@@ -1,5 +1,6 @@
 package jungmo.server.domain.service;
 
+import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
 import jungmo.server.domain.dto.response.UserResponse;
@@ -14,6 +15,7 @@ import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.Random;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -104,6 +107,25 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePassword(PasswordRequest request) {
+        User user = getUser();
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        // 새로운 비밀번호와 기존 비밀번호 비교
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        // 새로운 비밀번호 암호화 및 저장
+        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+
     }
 
     // 고유 코드 생성 (6자리 랜덤 문자열)
