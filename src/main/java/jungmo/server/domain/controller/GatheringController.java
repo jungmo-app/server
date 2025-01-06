@@ -19,20 +19,18 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/gatherings")
-@Tag(name = "Gathering", description = "모임 관련 API")
-public class GatheringController {
+public class GatheringController implements GatheringSwaggerController {
 
     private final GatheringService gatheringService;
 
+    @Override
     @PostMapping
-    @Operation(summary = "모임생성 API", description = "모임을 생성하는 API, 모임을 만든사람은 write 권한을 갖는다.")
     public ResultDetailResponse<String> saveGathering(@RequestBody @Valid GatheringRequest gatheringDto) {
         Gathering gathering = gatheringService.saveGathering(gatheringDto);
         return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(gathering.getId()));
     }
-
+    @Override
     @PutMapping("/{gatheringId}")
-    @Operation(summary = "모임수정 API", description = "모임 수정하는 API, write권한을 가진 사람만 수정이 가능하다.")
     public ResultDetailResponse<GatheringResponse> updateGathering(@PathVariable Long gatheringId,
                                                                    @RequestBody @Valid GatheringRequest gatheringDto) {
         gatheringService.updateGathering(gatheringId, gatheringDto);
@@ -40,24 +38,21 @@ public class GatheringController {
         GatheringResponse dto = gatheringService.toDto(gathering);
         return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING, dto);
     }
-
+    @Override
     @GetMapping("/{gatheringId}")
-    @Operation(summary = "모임 조회 API", description = "모임의 상세조회 API.")
     public ResultDetailResponse<GatheringResponse> getGathering(@PathVariable Long gatheringId) {
         Gathering gathering = gatheringService.findGathering(gatheringId);
         GatheringResponse dto = gatheringService.toDto(gathering);
         return new ResultDetailResponse<>(ResultCode.GET_GATHERING, dto);
     }
-
+    @Override
     @GetMapping
-    @Operation(summary = "모임 목록 조회 API" , description = "로그인 된 사용자에게 예정된 모임들을 모두 조회한다.")
     public ResultListResponse<GatheringListResponse> getMyGathering(){
         List<GatheringListResponse> myGatherings = gatheringService.findMyGatherings();
         return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, myGatherings);
     }
-
+    @Override
     @DeleteMapping("/{gatheringId}")
-    @Operation(summary = "모임 삭제 API", description = "모임을 삭제하는 API, write권한을 가진 사람만 삭제가 가능하다.")
     public ResultDetailResponse<Void> deleteGathering(@PathVariable Long gatheringId) {
         gatheringService.deleteGathering(gatheringId);
         return new ResultDetailResponse<>(ResultCode.DELETE_GATHERING, null);
