@@ -22,6 +22,7 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(400, "C012", "현재 비밀번호가 일치하지 않습니다."),
     INVALID_PASSWORD(400, "C013", "새로운 비밀번호는 기존 비밀번호와 동일할 수 없습니다."),
     UNABLE_TO_UPDATE_PASSWORD(400, "C014", "소셜로그인 한 사용자입니다."),
+    ALREADY_LOGOUT_TOKEN(400, "C015", "로그아웃상태인 토큰입니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),

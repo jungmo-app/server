@@ -1,6 +1,8 @@
 package jungmo.server.global.auth.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import io.lettuce.core.RedisException;
@@ -15,6 +17,7 @@ import jungmo.server.global.error.exception.BusinessException;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import jungmo.server.domain.entity.User;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +28,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,6 +39,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
+    private final RedisTemplate<String,String> redisTemplate;
 
     @Transactional
     public void register(RegisterRequestDto request, HttpServletResponse response) {
@@ -97,6 +103,24 @@ public class AuthService {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
         }
     }
+
+    /**
+     * 로그아웃 처리
+     * @param accessToken
+     * @param refreshToken
+     */
+
+    public void logout(String accessToken, String refreshToken) {
+        // 1. 리프레시 토큰 삭제
+        if (refreshToken != null) {
+            redisTemplate.delete(refreshToken);
+        }
+
+        // 2. 액세스 토큰 블랙리스트 등록
+        long expiration = jwtTokenProvider.getExpiration(accessToken); // 토큰 만료 시간 계산
+        redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
+    }
+
 
 
     /**
