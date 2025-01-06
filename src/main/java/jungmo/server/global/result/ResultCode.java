@@ -14,6 +14,7 @@ public enum ResultCode {
     GET_MY_INFO_SUCCESS(200, "U005", "로그인된 사용자 정보 조회 완료"),
     UPDATE_USER_INFO(200, "U006", "사용자 정보 수정 완료"),
     UPDATE_USER_PASSWORD(200, "U007", "사용자 비밀번호 수정 완료"),
+    LOGOUT_SUCCESS(200, "U008", "로그아웃 완료"),
 
     //Gathering
     REGISTER_GATHERING(200,"G001","모임 생성 완료"),

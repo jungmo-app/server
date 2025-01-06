@@ -47,5 +47,14 @@ public class AuthController implements AuthSwaggerController{
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @RequestHeader("Authorization") String accessToken,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        accessToken = accessToken.replace("Bearer ", ""); // Bearer 제거
+        authService.logout(accessToken, refreshToken);
+        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGOUT_SUCCESS, null));
+    }
+
 }
 
