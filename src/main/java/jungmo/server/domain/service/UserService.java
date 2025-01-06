@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -112,6 +113,10 @@ public class UserService {
     @Transactional
     public void changePassword(PasswordRequest request) {
         User user = getUser();
+
+        if (Objects.equals(user.getProvider(), "kakao")) {
+            throw new BusinessException(ErrorCode.UNABLE_TO_UPDATE_PASSWORD);
+        }
 
         // 현재 비밀번호 검증
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
