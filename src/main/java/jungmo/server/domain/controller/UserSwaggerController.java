@@ -8,8 +8,10 @@ import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.global.result.ResultDetailResponse;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
 
@@ -28,4 +30,9 @@ public interface UserSwaggerController {
     @Operation(summary = "로그인 한 유저 비밀번호 수정 API", description = "로그인 한 유저의 비밀번호를 수정하는 api")
     public ResultDetailResponse<Void> changePassword(
             @RequestBody @Valid PasswordRequest request);
+
+    @Operation(summary = "회원 탈퇴 API", description = "회원탈퇴를 하는 api")
+    public ResultDetailResponse<Void> deleteUser(
+            @RequestHeader("Authorization") String accessToken,
+            @CookieValue(value = "refreshToken", required = true) String refreshToken);
 }
