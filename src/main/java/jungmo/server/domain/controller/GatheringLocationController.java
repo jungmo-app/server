@@ -21,7 +21,8 @@ public class GatheringLocationController implements GatheringLocationSwaggerCont
     @PostMapping("/{gatheringId}/locations")
     public ResultDetailResponse<Long> saveLocation(@PathVariable Long gatheringId,
                                                    @RequestBody @Valid LocationRequest locationRequestDto) {
-        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING_LOCATION, gatheringLocationService.saveGatheringLocation(gatheringId, locationRequestDto,false).getId());
+        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING_LOCATION,
+                gatheringLocationService.saveGatheringLocation(gatheringId, locationRequestDto,false).getId());
     }
 
     @Override

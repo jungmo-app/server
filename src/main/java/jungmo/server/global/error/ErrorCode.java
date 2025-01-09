@@ -23,6 +23,8 @@ public enum ErrorCode {
     INVALID_PASSWORD(400, "C013", "새로운 비밀번호는 기존 비밀번호와 동일할 수 없습니다."),
     UNABLE_TO_UPDATE_PASSWORD(400, "C014", "소셜로그인 한 사용자입니다."),
     ALREADY_LOGOUT_TOKEN(400, "C015", "로그아웃상태인 토큰입니다."),
+    SOCIAL_UNLINK_FAILED(400,"C016","카카오 연동 해제 실패."),
+    USER_DELETED(400,"C017","이미 탈퇴한 유저입니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "Token has expired"),

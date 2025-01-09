@@ -2,6 +2,8 @@ package jungmo.server.global.oauth2.service;
 
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
+import jungmo.server.global.error.ErrorCode;
+import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -28,10 +30,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // 2. 제공자 정보 및 사용자 정보 추출
         String provider = userRequest.getClientRegistration().getRegistrationId(); // 예: "kakao"
+        Long kakaoId = oAuth2User.getAttribute("id"); // 카카오 고유 사용자 ID
         Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
         Map<String, Object> properties = oAuth2User.getAttribute("properties");
 
-        if (kakaoAccount == null || properties == null) {
+        if (kakaoId == null || kakaoAccount == null || properties == null) {
             throw new IllegalArgumentException("OAuth2 인증에서 사용자 정보를 가져올 수 없습니다.");
         }
 
@@ -39,23 +42,36 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String email = (String) kakaoAccount.get("email");
         String nickname = (String) properties.get("nickname");
 
-        // 사용자 속성에 email 추가
-        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
-        attributes.put("email", email);
-
         if (email == null) {
             throw new IllegalArgumentException("OAuth2 인증에서 이메일을 가져올 수 없습니다.");
         }
 
-        // 3. 사용자 정보 DB 조회 또는 저장
-        User user = userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(User.builder()
-                        .email(email)
-                        .userName(nickname) // 닉네임 저장
-                        .provider(provider) // 로그인 제공자
-                        .role("ROLE_USER") // 기본 권한
-                        .build()));
+        // 사용자 속성에 email과 kakaoId 추가
+        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+        attributes.put("email", email);
+        attributes.put("kakaoId", kakaoId);
 
+        // 3. 사용자 정보 DB 조회
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user != null) {
+            // 4. 소프트 딜리트 상태 확인
+            if (user.getIsDeleted()) {
+                // 탈퇴된 사용자 복구
+                user.reactivate(kakaoId.toString(),provider); // 상태를 ACTIVE로 변경
+                userRepository.save(user);
+            }
+        } else {
+            // 5. 신규 사용자 저장
+            user = userRepository.save(User.builder()
+                    .email(email)
+                    .oauthId(kakaoId.toString())
+                    .userName(nickname)
+                    .provider(provider)
+                    .role("ROLE_USER")
+                    .build());
+
+        }
         // 4. DefaultOAuth2User 객체 반환
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole())), // 권한 설정

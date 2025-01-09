@@ -39,7 +39,6 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
-    private final RedisTemplate<String,String> redisTemplate;
 
     @Transactional
     public void register(RegisterRequestDto request, HttpServletResponse response) {
@@ -86,7 +85,12 @@ public class AuthService {
 
             // 2. 인증 성공 후 Principal에서 사용자 정보 추출
             PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+            User user = principal.getUser();
             String email = principal.getUsername();
+
+            if (user.getIsDeleted()) {
+                throw new BusinessException(ErrorCode.USER_DELETED);
+            }
 
             // 3. Access Token과 Refresh Token 생성
             String accessToken = jwtTokenProvider.generateAccessToken(email);
@@ -102,23 +106,6 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
         }
-    }
-
-    /**
-     * 로그아웃 처리
-     * @param accessToken
-     * @param refreshToken
-     */
-
-    public void logout(String accessToken, String refreshToken) {
-        // 1. 리프레시 토큰 삭제
-        if (refreshToken != null) {
-            redisTemplate.delete(refreshToken);
-        }
-
-        // 2. 액세스 토큰 블랙리스트 등록
-        long expiration = jwtTokenProvider.getExpiration(accessToken); // 토큰 만료 시간 계산
-        redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
     }
 
 

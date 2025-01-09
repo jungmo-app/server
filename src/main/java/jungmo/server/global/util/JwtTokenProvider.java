@@ -10,12 +10,14 @@ import jungmo.server.global.error.exception.CustomJwtException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +31,7 @@ public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
     private String secretKey;
     private final CustomUserDetailsService userDetailsService;
+    private final RedisTemplate<String,String> redisTemplate;
 
     private final long accessTokenExpiration = 1000 * 60 * 30; //30분
     private final long refreshTokenExpiration = 1000 * 60 * 60 * 24 * 7;  //7일
@@ -54,6 +57,17 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public void invalidateTokens(String accessToken, String refreshToken) {
+        // 1. 리프레시 토큰 삭제
+        if (refreshToken != null) {
+            redisTemplate.delete(refreshToken);
+        }
+
+        // 2. 액세스 토큰 블랙리스트 등록
+        long expiration = getExpiration(accessToken); // 토큰 만료 시간 계산
+        redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
     }
 
     // 토큰에서 Authentication 객체 생성

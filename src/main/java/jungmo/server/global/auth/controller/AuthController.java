@@ -4,6 +4,7 @@ package jungmo.server.global.auth.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController implements AuthSwaggerController{
 
     private final AuthService authService;
+    private final UserService userService;
 
     @Override
     @PostMapping("/register")
@@ -53,7 +55,7 @@ public class AuthController implements AuthSwaggerController{
             @RequestHeader("Authorization") String accessToken,
             @CookieValue(value = "refreshToken", required = true) String refreshToken) {
         accessToken = accessToken.replace("Bearer ", ""); // Bearer 제거
-        authService.logout(accessToken, refreshToken);
+        userService.logout(accessToken, refreshToken);
         return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGOUT_SUCCESS, null));
     }
 
