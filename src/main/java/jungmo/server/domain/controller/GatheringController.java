@@ -26,30 +26,28 @@ public class GatheringController implements GatheringSwaggerController {
     @Override
     @PostMapping
     public ResultDetailResponse<String> saveGathering(@RequestBody @Valid GatheringRequest gatheringDto) {
-        Gathering gathering = gatheringService.saveGathering(gatheringDto);
-        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(gathering.getId()));
+        return new ResultDetailResponse<>(ResultCode.REGISTER_GATHERING, String.valueOf(gatheringService.saveGathering(gatheringDto)));
     }
     @Override
     @PutMapping("/{gatheringId}")
     public ResultDetailResponse<GatheringResponse> updateGathering(@PathVariable Long gatheringId,
                                                                    @RequestBody @Valid GatheringRequest gatheringDto) {
         gatheringService.updateGathering(gatheringId, gatheringDto);
-        Gathering gathering = gatheringService.findGathering(gatheringId);
-        GatheringResponse dto = gatheringService.toDto(gathering);
-        return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING, dto);
+        return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING,
+                gatheringService.toDto(
+                        gatheringService.findGathering(gatheringId)));
     }
     @Override
     @GetMapping("/{gatheringId}")
     public ResultDetailResponse<GatheringResponse> getGathering(@PathVariable Long gatheringId) {
-        Gathering gathering = gatheringService.findGathering(gatheringId);
-        GatheringResponse dto = gatheringService.toDto(gathering);
-        return new ResultDetailResponse<>(ResultCode.GET_GATHERING, dto);
+        return new ResultDetailResponse<>(ResultCode.GET_GATHERING,
+                gatheringService.toDto(
+                        gatheringService.findGathering(gatheringId)));
     }
     @Override
     @GetMapping
     public ResultListResponse<GatheringListResponse> getMyGathering(){
-        List<GatheringListResponse> myGatherings = gatheringService.findMyGatherings();
-        return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, myGatherings);
+        return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, gatheringService.findMyGatherings());
     }
     @Override
     @DeleteMapping("/{gatheringId}")

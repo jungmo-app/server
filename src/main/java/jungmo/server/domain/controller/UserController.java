@@ -18,30 +18,27 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController implements UserSwaggerController{
+public class UserController implements UserSwaggerController {
 
     private final UserService userService;
 
     @Override
     @GetMapping("/search")
     public ResultDetailResponse<UserResponse> searchUser(@RequestBody @Valid UserCodeRequest userCodeDto) {
-        UserResponse user = userService.findUser(userCodeDto);
-        return new ResultDetailResponse<>(ResultCode.GET_USER_SUCCESS, user);
+        return new ResultDetailResponse<>(ResultCode.GET_USER_SUCCESS, userService.findUser(userCodeDto));
     }
 
     @Override
     @GetMapping("/info")
     public ResultDetailResponse<UserResponse> getUser() {
-        UserResponse userInfo = userService.getUserInfo();
-        return new ResultDetailResponse<>(ResultCode.GET_MY_INFO_SUCCESS, userInfo);
+        return new ResultDetailResponse<>(ResultCode.GET_MY_INFO_SUCCESS, userService.getUserInfo());
     }
 
     @Override
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResultDetailResponse<UserResponse> updateProfile(@ModelAttribute @Valid UserRequest userDto) throws IOException {
-        Long user_id = userService.updateUserProfile(userDto);
-        UserResponse user = userService.findUserById(user_id);
-        return new ResultDetailResponse<>(ResultCode.UPDATE_USER_INFO, user);
+        return new ResultDetailResponse<>(ResultCode.UPDATE_USER_INFO,
+                userService.findUserById(userService.updateUserProfile(userDto)));
     }
 
     @Override
@@ -50,5 +47,15 @@ public class UserController implements UserSwaggerController{
             @RequestBody @Valid PasswordRequest request) {
         userService.changePassword(request);
         return new ResultDetailResponse<>(ResultCode.UPDATE_USER_PASSWORD, null);
+    }
+
+    @DeleteMapping("/info")
+    public ResultDetailResponse<Void> deleteUser(
+            @RequestHeader("Authorization") String accessToken,
+            @CookieValue(value = "refreshToken", required = true) String refreshToken) {
+
+        accessToken = accessToken.replace("Bearer ", "");
+        userService.deleteUser(accessToken, refreshToken);
+        return new ResultDetailResponse<>(ResultCode.DELETE_USER, null);
     }
 }

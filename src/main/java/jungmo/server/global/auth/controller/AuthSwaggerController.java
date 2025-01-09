@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Tag(name = "register/login", description = "회원가입 및 로그인 관련 API")
 public interface AuthSwaggerController {
 
-    @Operation(summary = "회원가입" , description = "회원가입 API")
+    @Operation(summary = "회원가입" , description = "회원가입 API 액세스토큰 불필요")
     public ResponseEntity<ResultDetailResponse<Void>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response);
 
-    @Operation(summary = "로그인" , description = "로그인 API")
+    @Operation(summary = "로그인" , description = "로그인 API 액세스토큰 불필요")
     public ResponseEntity<ResultDetailResponse<Void>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response);
 
     @Operation(summary = "토큰 리프레시" , description = "액세스, 리프레시 토큰 재발급 API")

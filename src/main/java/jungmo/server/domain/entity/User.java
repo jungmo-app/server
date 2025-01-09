@@ -32,11 +32,15 @@ public class User extends BaseTimeEntity {
     private String profileImage;
     @Column(name = "provider")
     private String provider;
+    @Column(name = "oauth_id")
+    private String oauthId;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
     @OneToMany(mappedBy = "user")
     private List<GatheringUser> gatheringUserList = new ArrayList<>();
 
     @Builder
-    public User(Long id, String userCode, String userName, String email, String password, String role, String profileImage, String provider, List<GatheringUser> gatheringUserList) {
+    public User(Long id, String userCode, String userName, String email, String password, String role, String profileImage, String provider, String oauthId, List<GatheringUser> gatheringUserList) {
         this.id = id;
         this.userCode = userCode;
         this.userName = userName;
@@ -45,7 +49,19 @@ public class User extends BaseTimeEntity {
         this.role = role;
         this.profileImage = profileImage;
         this.provider = provider;
+        this.oauthId = oauthId;
+        this.isDeleted = false;
         this.gatheringUserList = gatheringUserList != null ? gatheringUserList : new ArrayList<>();
+    }
+
+    public void deactivate() {
+        this.isDeleted = true;
+    }
+
+    public void reactivate(String oauthId, String provider) {
+        this.isDeleted = false;
+        this.oauthId = oauthId;
+        this.provider = provider;
     }
 
     public void updatePassword(String password) {

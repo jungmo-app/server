@@ -8,10 +8,13 @@ import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
+import jungmo.server.global.auth.service.AuthService;
+import jungmo.server.global.auth.service.KakaoService;
 import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.auth.service.S3Service;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
+import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,8 @@ import java.util.Random;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KakaoService kakaoService;
+    private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
     private final Random random = new Random();
@@ -131,6 +136,22 @@ public class UserService {
         // 새로운 비밀번호 암호화 및 저장
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
 
+    }
+
+    @Transactional
+    public void deleteUser(String accessToken, String refreshToken) {
+        User user = getUser();
+        tokenProvider.invalidateTokens(accessToken, refreshToken);
+
+        if ("kakao".equals(user.getProvider())) {
+            kakaoService.unlinkKakaoAccount(user.getOauthId());
+        }
+        user.deactivate();
+    }
+
+    @Transactional
+    public void logout(String accessToken, String refreshToken) {
+        tokenProvider.invalidateTokens(accessToken,refreshToken);
     }
 
     // 고유 코드 생성 (6자리 랜덤 문자열)
