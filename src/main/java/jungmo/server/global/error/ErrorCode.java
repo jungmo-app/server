@@ -25,9 +25,10 @@ public enum ErrorCode {
     ALREADY_LOGOUT_TOKEN(400, "C015", "로그아웃상태인 토큰입니다."),
     SOCIAL_UNLINK_FAILED(400,"C016","카카오 연동 해제 실패."),
     USER_DELETED(400,"C017","이미 탈퇴한 유저입니다."),
+    EMAIL_SEND_FAILED(400, "C018", "이메일 전송 실패"),
 
     //Token
-    TOKEN_EXPIRED(401, "T001", "Token has expired"),
+    TOKEN_EXPIRED(401, "T001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(401, "T002", "Invalid token"),
     MALFORMED_TOKEN(401, "T003", "Malformed token"),
     UNSUPPORTED_TOKEN(401, "T004", "Unsupported token"),

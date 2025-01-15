@@ -8,6 +8,9 @@ import io.jsonwebtoken.security.SignatureException;
 import io.lettuce.core.RedisException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jungmo.server.domain.dto.request.PasswordResetRequest;
+import jungmo.server.domain.repository.UserRepository;
+import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
@@ -29,6 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +44,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Transactional
     public void register(RegisterRequestDto request, HttpServletResponse response) {
@@ -108,7 +115,36 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public void processPasswordResetRequest(PasswordResetRequest request) {
+        String email = request.getEmail();
+        // 1. 사용자 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
 
+        // 2. 재설정 토큰 생성 및 저장
+        String resetToken = UUID.randomUUID().toString(); // 랜덤 토큰 생성
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiry(LocalDateTime.now().plusHours(1)); // 토큰 만료 시간 설정
+
+        String resetLink = "https://your-domain.com/reset-password?token=" + resetToken;
+        emailService.sendEmail(email, resetLink);
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        // 1. 토큰 검증
+        User user = userRepository.findByResetToken(token)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TOKEN));
+
+        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        // 2. 비밀번호 업데이트
+        user.resetPassword(passwordEncoder.encode(newPassword));
+
+    }
 
     /**
      * Refresh Token을 사용한 Access Token 재발급
