@@ -16,6 +16,7 @@ public enum ResultCode {
     UPDATE_USER_PASSWORD(200, "U007", "사용자 비밀번호 수정 완료"),
     LOGOUT_SUCCESS(200, "U008", "로그아웃 완료"),
     DELETE_USER(200, "U009", "회원 탈퇴 완료"),
+    SEND_EMAIL(200, "U010", "비밀번호 재설정 이메일 발송완료"),
 
     //Gathering
     REGISTER_GATHERING(200,"G001","모임 생성 완료"),

@@ -27,10 +27,6 @@ public interface UserSwaggerController {
     @Operation(summary = "로그인 한 유저 정보 수정 API", description = "로그인 한 유저의 정보를 수정하는 api")
     public ResultDetailResponse<UserResponse> updateProfile(@ModelAttribute @Valid UserRequest userDto) throws IOException;
 
-    @Operation(summary = "로그인 한 유저 비밀번호 수정 API", description = "로그인 한 유저의 비밀번호를 수정하는 api")
-    public ResultDetailResponse<Void> changePassword(
-            @RequestBody @Valid PasswordRequest request);
-
     @Operation(summary = "회원 탈퇴 API", description = "회원탈퇴를 하는 api")
     public ResultDetailResponse<Void> deleteUser(
             @RequestHeader("Authorization") String accessToken,

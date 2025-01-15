@@ -41,14 +41,6 @@ public class UserController implements UserSwaggerController {
                 userService.findUserById(userService.updateUserProfile(userDto)));
     }
 
-    @Override
-    @PutMapping("/password")
-    public ResultDetailResponse<Void> changePassword(
-            @RequestBody @Valid PasswordRequest request) {
-        userService.changePassword(request);
-        return new ResultDetailResponse<>(ResultCode.UPDATE_USER_PASSWORD, null);
-    }
-
     @DeleteMapping("/info")
     public ResultDetailResponse<Void> deleteUser(
             @RequestHeader("Authorization") String accessToken,
