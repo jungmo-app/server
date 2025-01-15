@@ -52,6 +52,11 @@ jobs:
           echo "${{ secrets.APPLICATION_OAUTH_YML }}" | base64 --decode > src/main/resources/application-oauth.yml
           find src
 
+      - name: application-smtp.yml 파일 만들기
+        run: |
+          echo "${{ secrets.APPLICATION_SMTP_YML }}" | base64 --decode > src/main/resources/application-smtp.yml
+          find src
+
 
       
 
