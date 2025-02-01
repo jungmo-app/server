@@ -2,11 +2,13 @@ package jungmo.server.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
+@NoArgsConstructor
 public class GatheringListResponse {
 
     private Long id;

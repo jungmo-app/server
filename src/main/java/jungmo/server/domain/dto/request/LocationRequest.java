@@ -2,8 +2,10 @@ package jungmo.server.domain.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class LocationRequest {
     @NotBlank(message = "장소의 이름을 입력해주세요.")
     @Size(max = 100, message = "장소의 이름은 최대 100자까지 가능합니다.")
