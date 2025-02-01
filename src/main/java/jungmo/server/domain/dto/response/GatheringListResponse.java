@@ -1,5 +1,6 @@
 package jungmo.server.domain.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,8 +11,11 @@ public class GatheringListResponse {
 
     private Long id;
     private String title;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate endDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
 
     public GatheringListResponse(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime) {

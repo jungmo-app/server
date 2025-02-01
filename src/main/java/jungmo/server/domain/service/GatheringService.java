@@ -43,7 +43,7 @@ public class GatheringService {
     private final LocationService locationService;
 
     @Transactional
-    public Gathering saveGathering(GatheringRequest dto) {
+    public Long saveGathering(GatheringRequest dto) {
         //모임 생성
         Gathering gathering = Gathering.builder()
                 .title(dto.getTitle())
@@ -68,7 +68,7 @@ public class GatheringService {
         log.info("GatheringLocation ID: {}", gatheringLocation.getId());
         log.info("Gathering: {}", gatheringLocation.getGathering());
         log.info("Is initialized: {}", Hibernate.isInitialized(gatheringLocation.getGathering()));
-        return savedGathering;
+        return savedGathering.getId();
     }
 
     @Transactional
