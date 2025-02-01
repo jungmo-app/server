@@ -1,5 +1,6 @@
 package jungmo.server.domain.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,10 +15,13 @@ public class GatheringRequest {
     @NotBlank(message = "제목을 입력해주세요.")
     private String title;
     @NotNull(message = "시작날짜를 입력해주세요.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate startDate;
     @NotNull(message = "종료날짜를 입력해주세요.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate endDate;
     @NotNull(message = "시작시간을 입력해주세요.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
     private LocationRequest meetingLocation;
     private String memo;
