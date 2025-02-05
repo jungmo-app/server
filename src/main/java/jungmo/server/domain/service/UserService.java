@@ -155,7 +155,7 @@ public class UserService {
     }
 
     // 고유 코드 생성 (6자리 랜덤 문자열)
-    private String generateUniqueUserCode() {
+    public String generateUniqueUserCode() {
         String code;
         do {
             code = generateRandomString(6);

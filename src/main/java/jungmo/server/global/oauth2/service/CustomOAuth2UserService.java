@@ -2,6 +2,7 @@ package jungmo.server.global.oauth2.service;
 
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
+import jungmo.server.domain.service.UserService;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
@@ -62,9 +64,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 userRepository.save(user);
             }
         } else {
+            // 고유 코드 생성
+            String uniqueCode = userService.generateUniqueUserCode();
             // 5. 신규 사용자 저장
             user = userRepository.save(User.builder()
                     .email(email)
+                    .userCode(uniqueCode)
                     .oauthId(kakaoId.toString())
                     .userName(nickname)
                     .provider(provider)
