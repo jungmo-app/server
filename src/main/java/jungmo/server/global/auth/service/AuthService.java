@@ -186,7 +186,7 @@ public class AuthService {
 
     private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(false); // 개발중에는 false로 해서 프론트측에서 접근할수있도록
+        cookie.setHttpOnly(true); // 개발중에는 false로 해서 프론트측에서 접근할수있도록
         cookie.setMaxAge(maxAge); // 쿠키 만료 시간 설정
         cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
         response.addCookie(cookie);
