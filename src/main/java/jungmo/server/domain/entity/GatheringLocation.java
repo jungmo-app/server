@@ -15,7 +15,7 @@ public class GatheringLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "is_first_location")
+
     private boolean isFirstLocation;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")

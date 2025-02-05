@@ -21,9 +21,6 @@ public class LocationRequest {
     @DecimalMin(value = "-180.0", message = "경도는 -180 이상이어야 합니다.")
     @DecimalMax(value = "180.0", message = "경도는 180 이하여야 합니다.")
     private double longitude;
-    @NotBlank(message = "장소의 고유ID를 입력해주세요.")
-    @Size(max = 50, message = "장소의 고유ID는 최대 50자까지 가능합니다.")
-    private String placeId;
     @NotBlank(message = "장소의 카테고리를 입력해주세요.")
     @Size(max = 50, message = "카테고리는 최대 50자까지 가능합니다.")
     private String category;

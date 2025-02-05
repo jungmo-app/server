@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
@@ -19,27 +19,27 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-    @Column(name = "user_code",nullable = false, unique = true, length = 6)
+    @Column(nullable = false, unique = true, length = 6)
     private String userCode;
-    @Column(name = "user_name")
+
     private String userName;
-    @Column(name = "email")
+
     private String email;
-    @Column(name = "password")
+
     private String password;
     @Column(name = "user_role")
     private String role;
-    @Column(name = "profile_image")
+
     private String profileImage;
-    @Column(name = "provider")
+
     private String provider;
-    @Column(name = "oauth_id")
+
     private String oauthId;
-    @Column(name = "is_deleted")
+
     private Boolean isDeleted;
-    @Column(name = "reset_token")
+
     private String resetToken;
-    @Column(name = "reset_token_expiry")
+
     private LocalDateTime resetTokenExpiry;
     @OneToMany(mappedBy = "user")
     private List<GatheringUser> gatheringUserList = new ArrayList<>();

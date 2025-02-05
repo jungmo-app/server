@@ -20,19 +20,19 @@ public class Gathering {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gathering_id")
     private Long id;
-    @Column(name = "gathering_title")
+
     private String title;
-    @Column(name = "gathering_start_date")
+
     private LocalDate startDate;
-    @Column(name = "gathering_end_date")
+
     private LocalDate endDate;
-    @Column(name = "gathering_start_time")
+
     private LocalTime startTime;
-    @Column(name = "gathering_memo")
+
     private String memo;
-    @Column(name = "gathering_all_expense")
+
     private Long allExpense;
-    @Column(name = "is_deleted")
+
     private Boolean isDeleted;  //삭제된 모임여부
     @OneToMany(mappedBy = "gathering")
     private List<Expense> expenseList = new ArrayList<>();
