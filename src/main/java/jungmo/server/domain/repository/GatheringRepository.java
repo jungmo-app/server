@@ -17,5 +17,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long> {
             "where u.id = :userId " +
             "and g.isDeleted = false " +
             "and (g.startDate >= CURRENT_DATE or g.endDate >= CURRENT_DATE)")
+
     List<GatheringListResponse> findAllByUserId(@Param("userId") Long userId);
 }
