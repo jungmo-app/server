@@ -20,14 +20,14 @@ public class LocationService {
     @Transactional
     public Location handleLocationCreation(LocationRequest dto) {
         // placeId로 Location이 존재하는지 확인
-        Optional<Location> existingLocation = locationRepository.findByRoadAddress(dto.getRoadAddress());
+        Optional<Location> existingLocation = locationRepository.findByPlaceId(dto.getPlaceId());
         // 반환 또는 생성
         return existingLocation.orElseGet(() -> createLocation(dto));
     }
 
     @Transactional
     public void handleLocationUpdate(LocationRequest meetingLocationDto) {
-        Optional<Location> existingLocation = locationRepository.findByRoadAddress(meetingLocationDto.getRoadAddress());
+        Optional<Location> existingLocation = locationRepository.findByPlaceId(meetingLocationDto.getPlaceId());
 
         if (existingLocation.isPresent()) {
             updateLocation(meetingLocationDto); // 수정
@@ -38,7 +38,7 @@ public class LocationService {
 
     @Transactional
     public Location updateLocation(LocationRequest locationRequest) {
-        Location location = locationRepository.findByRoadAddress(locationRequest.getRoadAddress())
+        Location location = locationRepository.findByPlaceId(locationRequest.getPlaceId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.LOCATION_NOT_EXISTS));
 
         // 요청 데이터와 기존 데이터 비교 후 수정
@@ -63,6 +63,7 @@ public class LocationService {
                 .roadAddress(dto.getRoadAddress())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
+                .placeId(dto.getPlaceId())
                 .category(dto.getCategory())
                 .build();
         return locationRepository.save(location);

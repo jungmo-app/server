@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface GatheringLocationRepository extends JpaRepository<GatheringLocation, Long> {
 
-    @Query("select new jungmo.server.domain.dto.response.LocationResponse(l.id,l.name,l.roadAddress,l.latitude,l.longitude,l.category,gl.isFirstLocation) " +
+    @Query("select new jungmo.server.domain.dto.response.LocationResponse(l.id,l.name,l.roadAddress,l.latitude,l.longitude,l.placeId,l.category,gl.isFirstLocation) " +
     "from GatheringLocation gl " +
             "join gl.location l " +
             "where gl.gathering.id = :gatheringId")
