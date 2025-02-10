@@ -1,12 +1,9 @@
 package jungmo.server.domain.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.GatheringRequest;
 import jungmo.server.domain.dto.response.GatheringListResponse;
 import jungmo.server.domain.dto.response.GatheringResponse;
-import jungmo.server.domain.entity.Gathering;
 import jungmo.server.domain.service.GatheringService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
@@ -33,16 +30,12 @@ public class GatheringController implements GatheringSwaggerController {
     public ResultDetailResponse<GatheringResponse> updateGathering(@PathVariable Long gatheringId,
                                                                    @RequestBody @Valid GatheringRequest gatheringDto) {
         gatheringService.updateGathering(gatheringId, gatheringDto);
-        return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING,
-                gatheringService.toDto(
-                        gatheringService.findGathering(gatheringId)));
+        return new ResultDetailResponse<>(ResultCode.UPDATE_GATHERING, gatheringService.findGathering(gatheringId));
     }
     @Override
     @GetMapping("/{gatheringId}")
     public ResultDetailResponse<GatheringResponse> getGathering(@PathVariable Long gatheringId) {
-        return new ResultDetailResponse<>(ResultCode.GET_GATHERING,
-                gatheringService.toDto(
-                        gatheringService.findGathering(gatheringId)));
+        return new ResultDetailResponse<>(ResultCode.GET_GATHERING, gatheringService.findGathering(gatheringId));
     }
     @Override
     @GetMapping
