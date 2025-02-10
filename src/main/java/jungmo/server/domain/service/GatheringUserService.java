@@ -149,21 +149,22 @@ public class GatheringUserService {
      */
     @Transactional(readOnly = true)
     public List<UserResponse> getGatheringUsers(Long gatheringId) {
-        User user = getUser();
-        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findGatheringUserByUserIdAndGatheringId(user.getId(), gatheringId);
-        if (gatheringUser.isPresent()) {
-            return gatheringUserRepository.findAllBy(gatheringId);
-        } else throw new BusinessException(ErrorCode.NOT_A_GATHERING_USER);
+        return gatheringUserRepository.findAllBy(gatheringId);
     }
 
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        SecurityUserDto securityUser = SecurityUserDto.from(principalDetails);
-        Long userId = securityUser.getUserId();
+        log.info("authentication : {}", authentication);
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof PrincipalDetails) {
 
-        // 데이터베이스에서 사용자 조회
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            SecurityUserDto securityUser = SecurityUserDto.from((PrincipalDetails) principal);
+            Long userId = securityUser.getUserId();
+            // 데이터베이스에서 사용자 조회
+            return userRepository.findById(userId)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        } else {
+            return null;
+        }
     }
 }

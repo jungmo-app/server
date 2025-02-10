@@ -7,7 +7,6 @@ import jungmo.server.domain.dto.response.GatheringResponse;
 import jungmo.server.domain.dto.response.LocationResponse;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.*;
-import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
 import jungmo.server.domain.repository.UserRepository;
@@ -112,12 +111,26 @@ public class GatheringService {
     }
 
     @Transactional(readOnly = true)
-    public Gathering findGathering(Long gatheringId) {
+    public GatheringResponse findGathering(Long gatheringId) {
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
         if (gathering.getIsDeleted()) {
             throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
         }
-        return gathering;
+        GatheringResponse dto = toDto(gathering);
+
+         User user = getUser();
+
+         if (user == null) {
+         dto.setAuthority(Authority.READ);
+         return dto;
+         }
+
+         boolean hasWriteAuthority = gatheringUserRepository
+         .findByAuthority(user, gathering, Authority.WRITE)
+         .isPresent();
+
+         dto.setAuthority(hasWriteAuthority ? Authority.WRITE : Authority.READ);
+        return dto;
     }
 
     @Transactional(readOnly = true)
@@ -156,12 +169,18 @@ public class GatheringService {
 
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        SecurityUserDto securityUser = SecurityUserDto.from(principalDetails);
-        Long userId = securityUser.getUserId();
+        log.info("authentication : {}", authentication);
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof PrincipalDetails) {
 
-        // 데이터베이스에서 사용자 조회
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            SecurityUserDto securityUser = SecurityUserDto.from((PrincipalDetails) principal);
+            Long userId = securityUser.getUserId();
+            // 데이터베이스에서 사용자 조회
+            return userRepository.findById(userId)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        } else {
+            return null;
+        }
     }
+
 }

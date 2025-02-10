@@ -2,7 +2,6 @@ package jungmo.server.domain.controller;
 
 
 import jakarta.validation.Valid;
-import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
 import jungmo.server.domain.dto.response.UserResponse;

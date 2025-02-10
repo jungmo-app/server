@@ -1,7 +1,5 @@
 package jungmo.server.domain.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.LocationRequest;
 import jungmo.server.domain.service.GatheringLocationService;

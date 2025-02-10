@@ -8,6 +8,7 @@ import jungmo.server.global.oauth2.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+
+import static org.springframework.security.authorization.AuthenticatedAuthorizationManager.anonymous;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +40,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 적용
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/auth/**", "/oauth2/**","/login/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 인증 없이 접근 가능 경로
+                                .requestMatchers("/auth/**", "/oauth2/**","/login/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/gatherings/{gatheringId}").permitAll()// 인증 없이 접근 가능 경로
                                 .anyRequest().authenticated()
                         // 그 외 경로는 인증 필요
                 )
