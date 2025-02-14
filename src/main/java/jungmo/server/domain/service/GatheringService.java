@@ -82,8 +82,6 @@ public class GatheringService {
                 GatheringLocation firstLocation = gatheringLocationService.findFirstLocation(gatheringId);
                 //만나는 장소 업데이트
                 gatheringLocationService.deleteGatheringLocation(gatheringId, firstLocation.getId());
-
-                locationService.handleLocationUpdate(gatheringDto.getMeetingLocation());
                 gatheringLocationService.saveGatheringLocation(gatheringId, gatheringDto.getMeetingLocation(), true);
 
             } else {
