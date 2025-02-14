@@ -32,6 +32,7 @@ public class GatheringUserService {
     private final GatheringUserRepository gatheringUserRepository;
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
+    private final EmailService emailService;
 
     /**
      * 모임 참석자 초대하는 로직
@@ -75,7 +76,11 @@ public class GatheringUserService {
         List<User> usersToInvite = userRepository.findAllById(newUserIds);
         User currentUser = getUser();
 
-        if (usersToInvite.size() != newUserIds.size()) {
+        Set<Long> foundUserIds = usersToInvite.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+        if (!foundUserIds.containsAll(newUserIds)) {
             throw new BusinessException(ErrorCode.USER_INVALID);
         }
 
@@ -89,7 +94,7 @@ public class GatheringUserService {
                         .build()
                         .setUser(user)
                         .setGathering(gathering))
-                .toList();
+                .toList();;
 
         gatheringUserRepository.saveAll(newGatheringUsers);
     }
@@ -102,7 +107,7 @@ public class GatheringUserService {
 
         // 2. 연관 관계 해제
         gatheringUsersToRemove.forEach(gu -> {
-            System.out.println("삭제 대상 GatheringUser ID: " + gu.getId());
+            log.info("🗑 삭제 대상 GatheringUser ID: {}", gu.getId());
             gu.removeUser(gu.getUser()); // User와의 연관 관계 해제
             gu.removeGathering(gu.getGathering()); // Gathering과의 연관 관계 해제
         });

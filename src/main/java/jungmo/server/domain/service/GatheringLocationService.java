@@ -45,7 +45,6 @@ public class GatheringLocationService {
         gatheringLocation.setGathering(gathering);
         gatheringLocation.setLocation(location);
         gatheringLocation.setFirstLocation(isFirst);
-        log.info("GatheringLocation longitude: {}", gatheringLocation.getLocation().getLongitude());
         return gatheringLocationRepository.save(gatheringLocation);
     }
 

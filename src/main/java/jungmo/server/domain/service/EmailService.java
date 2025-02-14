@@ -24,8 +24,6 @@ public class EmailService {
     @Value("${spring.mail.username}") // SMTP 설정에서 발신자 이메일 가져오기
     private String fromEmail;
 
-
-
     public void sendEmail(String email, String resetLink) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -38,5 +36,4 @@ public class EmailService {
             throw new BusinessException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
-
 }
