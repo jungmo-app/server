@@ -3,9 +3,12 @@ package jungmo.server.domain.service;
 import jungmo.server.domain.dto.request.GatheringUserRequest;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.*;
+import jungmo.server.domain.provider.GatheringDataProvider;
+import jungmo.server.domain.provider.UserDataProvider;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
 import jungmo.server.domain.repository.UserRepository;
+import jungmo.server.domain.service.policy.GatheringUserPolicy;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
 import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.error.ErrorCode;
@@ -31,8 +34,9 @@ public class GatheringUserService {
 
     private final GatheringUserRepository gatheringUserRepository;
     private final UserRepository userRepository;
-    private final GatheringRepository gatheringRepository;
-    private final EmailService emailService;
+    private final UserDataProvider userDataProvider;
+    private final GatheringDataProvider gatheringDataProvider;
+    private final GatheringUserPolicy gatheringUserPolicy;
 
     /**
      * 모임 참석자 초대하는 로직
@@ -41,16 +45,15 @@ public class GatheringUserService {
      */
     @Transactional
     public void updateGatheringUsers(Long gatheringId,List<Long> userIds) {
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() ->
-                new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
-        User writeUser = getUser();
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        User writeUser = userDataProvider.getUser();
+
         //권한을 가지고 있는지 검증
-        gatheringUserRepository.findByAuthority(writeUser, gathering, Authority.WRITE)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NO_AUTHORITY));
+        gatheringUserPolicy.validateAuthority(writeUser, gathering, Authority.WRITE);
 
         // 초대 할 대상자 조회
         List<User> usersToUpdate = userRepository.findAllById(userIds);
-        validateUsers(usersToUpdate, userIds);
+        gatheringUserPolicy.validateUsers(usersToUpdate, userIds);
 
         // 추가 또는 삭제 대상 검증
         List<GatheringUser> existingGatheringUsers = gatheringUserRepository.findByGatheringId(gatheringId);
@@ -74,19 +77,13 @@ public class GatheringUserService {
     @Transactional
     public void addUsersToGathering(Gathering gathering, Set<Long> newUserIds) {
         List<User> usersToInvite = userRepository.findAllById(newUserIds);
-        User currentUser = getUser();
+        User currentUser = userDataProvider.getUser();
 
         Set<Long> foundUserIds = usersToInvite.stream()
                 .map(User::getId)
                 .collect(Collectors.toSet());
 
-        if (!foundUserIds.containsAll(newUserIds)) {
-            throw new BusinessException(ErrorCode.USER_INVALID);
-        }
-
-        if (newUserIds.contains(currentUser.getId())) {
-            throw new BusinessException(ErrorCode.CANNOT_INVITE_SELF);
-        }
+        gatheringUserPolicy.validateNewUsers(currentUser.getId(), foundUserIds, newUserIds);
 
         List<GatheringUser> newGatheringUsers = usersToInvite.stream()
                 .map(user -> GatheringUser.builder()
@@ -119,11 +116,6 @@ public class GatheringUserService {
      * @param usersToUpdate
      * @param userIds
      */
-    private void validateUsers(List<User> usersToUpdate, List<Long> userIds) {
-        if (usersToUpdate.size() != userIds.size()) {
-            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
-        }
-    }
 
 
     /**
@@ -136,8 +128,7 @@ public class GatheringUserService {
     @Transactional
     public GatheringUser saveGatheringUser(Long userId, GatheringUserRequest dto, Gathering gathering) {
         //모임유저 생성
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        User user = userDataProvider.findUserById(userId);
         GatheringUser gatheringUser = GatheringUser.builder()
                 .authority(dto.getAuthority())
                 .build();
@@ -147,29 +138,4 @@ public class GatheringUserService {
         return gatheringUserRepository.save(gatheringUser);
     }
 
-    /**
-     * 모임 참석자 모두 조회하는 로직
-     * @param gatheringId
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public List<UserResponse> getGatheringUsers(Long gatheringId) {
-        return gatheringUserRepository.findAllBy(gatheringId);
-    }
-
-    private User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("authentication : {}", authentication);
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof PrincipalDetails) {
-
-            SecurityUserDto securityUser = SecurityUserDto.from((PrincipalDetails) principal);
-            Long userId = securityUser.getUserId();
-            // 데이터베이스에서 사용자 조회
-            return userRepository.findById(userId)
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        } else {
-            return null;
-        }
-    }
 }

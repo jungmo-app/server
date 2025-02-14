@@ -5,6 +5,7 @@ import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.User;
+import jungmo.server.domain.provider.UserDataProvider;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
@@ -35,6 +36,7 @@ public class UserService {
     private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final UserDataProvider userDataProvider;
     private final Random random = new Random();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -45,18 +47,13 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserResponse findUser(UserCodeRequest userCode) {
-        User user = userRepository.findByUserCode(userCode.getUserCode())
-                .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserResponse dto = user.toDto();
-        return dto;
+        return userDataProvider.findUserByUserCode(userCode.getUserCode())
+                .toDto();
     }
 
     @Transactional(readOnly = true)
     public UserResponse findUserById(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
-        UserResponse dto = user.toDto();
-        return dto;
+       return userDataProvider.findUserById(userId).toDto();
     }
 
     /**
@@ -67,7 +64,7 @@ public class UserService {
      */
     @Transactional
     public Long updateUserProfile(UserRequest userDto) throws IOException {
-        User user = getUser();
+        User user = userDataProvider.getUser();
         try {
             if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
                 String profileImageUrl = s3Service.uploadFile(userDto.getProfileImage(), user.getId());
@@ -89,7 +86,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserResponse getUserInfo() {
-        User user = getUser();
+        User user = userDataProvider.getUser();
         return user.toDto();
     }
 
@@ -117,7 +114,7 @@ public class UserService {
 
     @Transactional
     public void changePassword(PasswordRequest request) {
-        User user = getUser();
+        User user = userDataProvider.getUser();
 
         if (Objects.equals(user.getProvider(), "kakao")) {
             throw new BusinessException(ErrorCode.UNABLE_TO_UPDATE_PASSWORD);
@@ -140,7 +137,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String accessToken, String refreshToken) {
-        User user = getUser();
+        User user = userDataProvider.getUser();
         tokenProvider.invalidateTokens(accessToken, refreshToken);
 
         if ("kakao".equals(user.getProvider())) {
@@ -173,14 +170,4 @@ public class UserService {
         return sb.toString();
     }
 
-    private User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        SecurityUserDto securityUser = SecurityUserDto.from(principalDetails);
-        Long userId = securityUser.getUserId();
-
-        // 데이터베이스에서 사용자 조회
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
-    }
 }

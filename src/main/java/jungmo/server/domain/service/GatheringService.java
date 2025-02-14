@@ -7,19 +7,17 @@ import jungmo.server.domain.dto.response.GatheringResponse;
 import jungmo.server.domain.dto.response.LocationResponse;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.*;
+import jungmo.server.domain.provider.GatheringDataProvider;
+import jungmo.server.domain.provider.GatheringLocationDataProvider;
+import jungmo.server.domain.provider.UserDataProvider;
+import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
-import jungmo.server.domain.repository.UserRepository;
-import jungmo.server.global.auth.dto.response.SecurityUserDto;
-import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +33,13 @@ import java.util.stream.Collectors;
 public class GatheringService {
 
     private final GatheringRepository gatheringRepository;
-    private final UserRepository userRepository;
     private final GatheringUserRepository gatheringUserRepository;
     private final GatheringUserService gatheringUserService;
     private final GatheringLocationService gatheringLocationService;
-    private final LocationService locationService;
+    private final UserDataProvider userDataProvider;
+    private final GatheringDataProvider gatheringDataProvider;
+    private final GatheringLocationDataProvider gatheringLocationDataProvider;
+    private final GatheringLocationRepository gatheringLocationRepository;
 
     @Transactional
     public Long saveGathering(GatheringRequest dto) {
@@ -56,7 +56,7 @@ public class GatheringService {
         Gathering savedGathering = gatheringRepository.save(gathering);
         //모임을 만든사람과 매핑
         GatheringUserRequest gatheringUserDto = new GatheringUserRequest(Authority.WRITE);
-        User user = getUser();
+        User user = userDataProvider.getUser();
         gatheringUserService.saveGatheringUser(user.getId(),gatheringUserDto,savedGathering);
         //초대 된 사람들과의 매핑
         Set<Long> userIds = new HashSet<>(dto.getUserIds());
@@ -72,14 +72,14 @@ public class GatheringService {
 
     @Transactional
     public void updateGathering(Long gatheringId, GatheringRequest gatheringDto) {
-        User user = getUser();
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
+        User user = userDataProvider.getUser();
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
         if (gatheringUser.isPresent()) {
             if (!gathering.getIsDeleted()) {
                 gathering.update(gatheringDto);
                 gatheringUserService.updateGatheringUsers(gatheringId,gatheringDto.getUserIds());
-                GatheringLocation firstLocation = gatheringLocationService.findFirstLocation(gatheringId);
+                GatheringLocation firstLocation = gatheringLocationDataProvider.findFirstLocation(gatheringId);
                 //만나는 장소 업데이트
                 gatheringLocationService.deleteGatheringLocation(gatheringId, firstLocation.getId());
                 gatheringLocationService.saveGatheringLocation(gatheringId, gatheringDto.getMeetingLocation(), true);
@@ -94,8 +94,8 @@ public class GatheringService {
 
     @Transactional
     public void deleteGathering(Long gatheringId) {
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
-        User user = getUser();
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        User user = userDataProvider.getUser();
         Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
         if (gatheringUser.isPresent()) {
             if (!gathering.getIsDeleted()) {
@@ -110,13 +110,9 @@ public class GatheringService {
 
     @Transactional(readOnly = true)
     public GatheringResponse findGathering(Long gatheringId) {
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new BusinessException(ErrorCode.GATHERING_NOT_EXISTS));
-        if (gathering.getIsDeleted()) {
-            throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
-        }
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
         GatheringResponse dto = toDto(gathering);
-
-         User user = getUser();
+        User user = userDataProvider.getUser();
 
          if (user == null) {
          dto.setAuthority(Authority.READ);
@@ -133,7 +129,7 @@ public class GatheringService {
 
     @Transactional(readOnly = true)
     public List<GatheringListResponse> findMyGatherings() {
-        User user = getUser();
+        User user = userDataProvider.getUser();
         List<GatheringListResponse> allGatherings = gatheringRepository.findAllByUserId(user.getId());
         return allGatherings;
     }
@@ -142,11 +138,11 @@ public class GatheringService {
     public GatheringResponse toDto(Gathering gathering) {
         GatheringResponse dto = gathering.toDto();
         // 모임 참석자 정보 가져오기
-        List<UserResponse> gatheringUsers = gatheringUserService.getGatheringUsers(gathering.getId());
+        List<UserResponse> gatheringUsers = gatheringUserRepository.findAllBy(gathering.getId());
         dto.setGatheringUsers(gatheringUsers);
 
         // 모임 장소 정보 가져오기
-        List<LocationResponse> locations = gatheringLocationService.findAllGatheringLocations(gathering.getId());
+        List<LocationResponse> locations = gatheringLocationRepository.findAllByGatheringId(gathering.getId());
 
         // 만나기로 한 장소와 나머지 장소 분리
         LocationResponse meetingPlace = locations.stream()
@@ -163,22 +159,6 @@ public class GatheringService {
         dto.setLocations(places);
 
         return dto;
-    }
-
-    private User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("authentication : {}", authentication);
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof PrincipalDetails) {
-
-            SecurityUserDto securityUser = SecurityUserDto.from((PrincipalDetails) principal);
-            Long userId = securityUser.getUserId();
-            // 데이터베이스에서 사용자 조회
-            return userRepository.findById(userId)
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        } else {
-            return null;
-        }
     }
 
 }
