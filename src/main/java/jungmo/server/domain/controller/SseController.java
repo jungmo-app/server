@@ -1,7 +1,6 @@
 package jungmo.server.domain.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jungmo.server.domain.dto.request.NotificationReadRequest;
+import jungmo.server.domain.dto.request.NotificationRequest;
 import jungmo.server.domain.dto.response.NotificationResponse;
 import jungmo.server.domain.service.NotificationService;
 import jungmo.server.domain.service.SseEmitterService;
@@ -35,8 +34,15 @@ public class SseController implements SseSwaggerController{
 
     @Override
     @PatchMapping("/notifications")
-    public ResultDetailResponse<Void> markNotificationsAsRead(@RequestBody NotificationReadRequest request) {
+    public ResultDetailResponse<Void> markNotificationsAsRead(@RequestBody NotificationRequest request) {
         notificationService.markAsRead(request.getNotificationIds());
         return new ResultDetailResponse<>(ResultCode.PROCESSED_IS_READ, null);
+    }
+
+    @Override
+    @DeleteMapping("/notifications")
+    public ResultDetailResponse<Void> deleteNotifications(@RequestBody NotificationRequest request) {
+        notificationService.delete(request.getNotificationIds());
+        return new ResultDetailResponse<>(ResultCode.PROCESSED_DELETE, null);
     }
 }

@@ -61,4 +61,11 @@ public class NotificationService {
         }
         entityManager.flush();
     }
+
+    @Transactional
+    public void delete(List<Long> notificationIds) {
+        if (notificationIds != null && !notificationIds.isEmpty()) {
+            notificationRepository.deleteAllById(notificationIds);
+        }
+    }
 }

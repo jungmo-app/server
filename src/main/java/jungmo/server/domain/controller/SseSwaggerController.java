@@ -2,7 +2,7 @@ package jungmo.server.domain.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jungmo.server.domain.dto.request.NotificationReadRequest;
+import jungmo.server.domain.dto.request.NotificationRequest;
 import jungmo.server.domain.dto.response.NotificationResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,5 +20,8 @@ public interface SseSwaggerController {
     public List<NotificationResponse> getNotifications();
 
     @Operation(summary = "알림 읽음 처리", description = "알림창을 열때 안읽은 알림들을 읽음 처리한다.")
-    public ResultDetailResponse<Void> markNotificationsAsRead(@RequestBody NotificationReadRequest request);
+    public ResultDetailResponse<Void> markNotificationsAsRead(@RequestBody NotificationRequest request);
+
+    @Operation(summary = "알림 삭제 처리", description = "특정 알림들을 삭제한다.")
+    public ResultDetailResponse<Void> deleteNotifications(@RequestBody NotificationRequest request);
 }

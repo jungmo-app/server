@@ -36,7 +36,8 @@ public enum ResultCode {
 
 
     //Notification
-    PROCESSED_IS_READ(200, "N001", "알림 읽음처리 완료");
+    PROCESSED_IS_READ(200, "N001", "알림 읽음처리 완료"),
+    PROCESSED_DELETE(200, "N002", "알림 삭제처리 완료");
 
 
     private int status;
