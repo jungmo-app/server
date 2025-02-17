@@ -37,6 +37,7 @@ public class GatheringUserService {
     private final UserDataProvider userDataProvider;
     private final GatheringDataProvider gatheringDataProvider;
     private final GatheringUserPolicy gatheringUserPolicy;
+    private final GatheringNotificationService gatheringNotificationService;
 
     /**
      * 모임 참석자 초대하는 로직
@@ -94,6 +95,8 @@ public class GatheringUserService {
                 .toList();;
 
         gatheringUserRepository.saveAll(newGatheringUsers);
+        gatheringNotificationService.invite(newUserIds, gathering.getId());
+
     }
 
     @Transactional
