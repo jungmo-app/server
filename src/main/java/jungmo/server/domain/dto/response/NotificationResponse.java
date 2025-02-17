@@ -15,6 +15,7 @@ public class NotificationResponse {
     private String message;
     private Long gatheringId;
     private String createdAt;
+    private boolean isRead;
 
     public static NotificationResponse from(Notification notification) {
         NotificationResponse dto = new NotificationResponse();
@@ -22,6 +23,7 @@ public class NotificationResponse {
         dto.setUserId(notification.getUser().getId());
         dto.setMessage(notification.getMessage());
         dto.setGatheringId(notification.getGatheringId());
+        dto.setRead(notification.isRead());
         dto.setCreatedAt(notification.getCreatedAt().toString());
         return dto;
     }

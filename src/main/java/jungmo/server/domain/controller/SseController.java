@@ -1,11 +1,11 @@
 package jungmo.server.domain.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jungmo.server.domain.dto.response.EventPayload;
+import jungmo.server.domain.dto.request.NotificationRequest;
 import jungmo.server.domain.dto.response.NotificationResponse;
 import jungmo.server.domain.service.NotificationService;
 import jungmo.server.domain.service.SseEmitterService;
+import jungmo.server.global.result.ResultCode;
+import jungmo.server.global.result.ResultDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -28,8 +28,21 @@ public class SseController implements SseSwaggerController{
 
     @Override
     @GetMapping("/notifications")
-    @Operation(summary = "알림 내역 조회", description = "로그인 한 사용자가 수신한 알림 내역을 조회한다.")
     public List<NotificationResponse> getNotifications() {
         return notificationService.getNotifications();
+    }
+
+    @Override
+    @PatchMapping("/notifications")
+    public ResultDetailResponse<Void> markNotificationsAsRead(@RequestBody NotificationRequest request) {
+        notificationService.markAsRead(request.getNotificationIds());
+        return new ResultDetailResponse<>(ResultCode.PROCESSED_IS_READ, null);
+    }
+
+    @Override
+    @DeleteMapping("/notifications")
+    public ResultDetailResponse<Void> deleteNotifications(@RequestBody NotificationRequest request) {
+        notificationService.delete(request.getNotificationIds());
+        return new ResultDetailResponse<>(ResultCode.PROCESSED_DELETE, null);
     }
 }
