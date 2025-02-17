@@ -32,7 +32,12 @@ public enum ResultCode {
 
     //GatheringLocation
     REGISTER_GATHERING_LOCATION(200,"GL001","모임장소 저장 완료"),
-    DELETE_GATHERING_LOCATION(200,"GL002","모임장소 삭제 완료");
+    DELETE_GATHERING_LOCATION(200,"GL002","모임장소 삭제 완료"),
+
+
+    //Notification
+    PROCESSED_IS_READ(200, "N001", "알림 읽음처리 완료");
+
 
     private int status;
     private final String code;

@@ -46,6 +46,7 @@ public class NotificationEventListener {
                             .userId(notification.getUser().getId())
                             .gatheringId(notification.getGatheringId())
                             .createdAt(notification.getCreatedAt().toString())
+                            .isRead(notification.isRead())
                             .message(notification.getMessage())
                             .build());
         } catch (Exception e) {

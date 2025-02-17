@@ -27,6 +27,8 @@ public class Notification {
 
     private Long gatheringId;
 
+    private boolean isRead;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
 
@@ -34,5 +36,6 @@ public class Notification {
         this.user = user;
         this.message = message;
         this.gatheringId = gatheringId;
+        this.isRead = false;
     }
 }

@@ -1,6 +1,8 @@
 package jungmo.server.domain.service;
 
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jungmo.server.domain.dto.response.NotificationResponse;
 import jungmo.server.domain.entity.Notification;
 import jungmo.server.domain.entity.User;
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserDataProvider userDataProvider;
+
+    @PersistenceContext
+    EntityManager entityManager;
     private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     /**
@@ -47,5 +52,13 @@ public class NotificationService {
         List<Notification> notifications =  notificationRepository.findByUserId(userDataProvider.getUser().getId());
         return notifications.stream()
                 .map(NotificationResponse::from).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void markAsRead(List<Long> notificationIds) {
+        if (notificationIds != null && !notificationIds.isEmpty()) {
+            notificationRepository.markAsRead(notificationIds);
+        }
+        entityManager.flush();
     }
 }
