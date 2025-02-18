@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 적용
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/auth/**", "/oauth2/**","/login/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/gatherings/{gatheringId}").permitAll()// 인증 없이 접근 가능 경로
+                                .requestMatchers(HttpMethod.GET, "/gatherings/{gatheringId}","maps/**").permitAll()// 인증 없이 접근 가능 경로
                                 .anyRequest().authenticated()
                         // 그 외 경로는 인증 필요
                 )
