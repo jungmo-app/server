@@ -23,51 +23,22 @@ public class GooglePlacesService {
     @Value("${google.api.key}") // 환경 변수에서 API 키 가져오기
     private String googleApiKey;
 
-    public List<PlaceAutoCompleteDto> getAutocompleteResults(String input, String language) {
+
+    public List<PlaceAutoCompleteDto> getAutocompleteResults(String input, String language, Double latitude, Double longitude) {
         String lang = (language != null) ? language : "ko";
-        String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json" +
-                "?input=" + input +
-                "&key=" + googleApiKey +
-                "&language=" + lang +
-                "&components=country:KR";
+        StringBuilder urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+                .append("?input=").append(input)
+                .append("&key=").append(googleApiKey)
+                .append("&language=").append(lang)
+                .append("&components=country:KR");
 
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-            if (response.getBody() == null) {
-                log.error("❌ Google Places API 응답이 비어 있음.");
-                return Collections.emptyList();
-            }
-
-            // JSON 파싱을 Jackson으로 변경
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response.getBody());
-            JsonNode predictions = root.path("predictions");
-            log.info("predictions = {}",predictions);
-
-            List<PlaceAutoCompleteDto> results = new ArrayList<>();
-            for (JsonNode prediction : predictions) {
-                PlaceAutoCompleteDto place = new PlaceAutoCompleteDto(
-                        prediction.path("structured_formatting").path("main_text").asText(),
-                        prediction.path("place_id").asText());
-                results.add(place);
-            }
-            return results;
-
-        } catch (Exception e) {
-            log.error("❌ Google Places API 요청 실패: {}", e.getMessage());
-            return Collections.emptyList();
+        // ✅ 위도/경도가 null이 아닐 경우에만 location 파라미터 추가
+        if (latitude != null && longitude != null) {
+            urlBuilder.append("&location=").append(latitude).append(",").append(longitude).append("&radius=5000");
         }
-    }
 
-    public List<PlaceAutoCompleteDto> getAutocompleteResultsWithPosition(String input, String language, PositionRequest positionRequest) {
-        String lang = (language != null) ? language : "ko";
-        String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json" +
-                "?input=" + input +
-                "&key=" + googleApiKey +
-                "&language=" + lang +
-                "&components=country:KR" +
-                "&location=" + positionRequest.getLatitude() + "," + positionRequest.getLongitude() + "&radius=5000";
+        String url = urlBuilder.toString();
+
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
