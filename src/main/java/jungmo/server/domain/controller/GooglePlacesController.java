@@ -20,24 +20,14 @@ public class GooglePlacesController implements GooglePlacesSwaggerController{
 
     @Override
     @GetMapping("/autocomplete")
-    public ResultListResponse<PlaceAutoCompleteDto> getAutocomplete(
-            @RequestParam String input,
-            @RequestParam(required = false) String language) {
-
-        log.info("🔍 Received input: '{}'", input);  // input 값 로그 확인
-
-        return new ResultListResponse<>(ResultCode.GET_AUTO_COMPLETE, googlePlacesService.getAutocompleteResults(input, language));
-    }
-
-    @Override
-    @GetMapping("/autocomplete/position")
     public ResultListResponse<PlaceAutoCompleteDto> getAutocompleteWithPosition(
             @RequestParam String input,
             @RequestParam(required = false) String language,
-            @RequestBody PositionRequest positionRequest) {
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude) {
 
         log.info("🔍 Received input: '{}'", input);  // input 값 로그 확인
 
-        return new ResultListResponse<>(ResultCode.GET_AUTO_COMPLETE, googlePlacesService.getAutocompleteResultsWithPosition(input, language, positionRequest));
+        return new ResultListResponse<>(ResultCode.GET_AUTO_COMPLETE, googlePlacesService.getAutocompleteResults(input, language, latitude,longitude));
     }
 }
