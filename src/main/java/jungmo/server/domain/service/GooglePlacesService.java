@@ -33,7 +33,6 @@ public class GooglePlacesService {
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            log.info("response = {}",response);
 
             if (response.getBody() == null) {
                 log.error("❌ Google Places API 응답이 비어 있음.");
@@ -49,11 +48,10 @@ public class GooglePlacesService {
             List<PlaceAutoCompleteDto> results = new ArrayList<>();
             for (JsonNode prediction : predictions) {
                 PlaceAutoCompleteDto place = new PlaceAutoCompleteDto(
-                        prediction.path("description").asText(),
+                        prediction.path("structured_formatting").path("main_text").asText(),
                         prediction.path("place_id").asText());
                 results.add(place);
             }
-            log.info("results = {}",results);
             return results;
 
         } catch (Exception e) {
@@ -73,7 +71,6 @@ public class GooglePlacesService {
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            log.info("response = {}",response);
 
             if (response.getBody() == null) {
                 log.error("❌ Google Places API 응답이 비어 있음.");
@@ -89,11 +86,10 @@ public class GooglePlacesService {
             List<PlaceAutoCompleteDto> results = new ArrayList<>();
             for (JsonNode prediction : predictions) {
                 PlaceAutoCompleteDto place = new PlaceAutoCompleteDto(
-                        prediction.path("description").asText(),
+                        prediction.path("structured_formatting").path("main_text").asText(),
                         prediction.path("place_id").asText());
                 results.add(place);
             }
-            log.info("results = {}",results);
             return results;
 
         } catch (Exception e) {
