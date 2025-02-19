@@ -10,5 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationRequest {
+
     private List<Long> notificationIds; // 읽음,삭제 처리할 알림 ID 리스트
 }
