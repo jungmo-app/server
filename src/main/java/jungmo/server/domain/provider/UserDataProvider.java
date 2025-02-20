@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -41,8 +43,7 @@ public class UserDataProvider {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
     }
 
-    public User findUserByUserCode(String userCode) {
-        return userRepository.findByUserCode(userCode)
-                .orElseThrow(() ->new BusinessException(ErrorCode.USER_NOT_EXISTS));
+    public List<User> findUserByUserCode(String userCode) {
+        return userRepository.findByUserCodeStartingWith(userCode);
     }
 }
