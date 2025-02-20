@@ -19,12 +19,14 @@ public class GatheringListResponse {
     private LocalDate endDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
+    private String meetingLocation;
 
-    public GatheringListResponse(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime) {
+    public GatheringListResponse(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String meetingLocation) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
+        this.meetingLocation = meetingLocation;
     }
 }
