@@ -21,6 +21,7 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -128,9 +129,9 @@ public class GatheringService {
     }
 
     @Transactional(readOnly = true)
-    public List<GatheringListResponse> findMyGatherings() {
+    public List<GatheringListResponse> findMyGatherings(LocalDate currentDate) {
         User user = userDataProvider.getUser();
-        List<GatheringListResponse> allGatherings = gatheringRepository.findAllByUserId(user.getId());
+        List<GatheringListResponse> allGatherings = gatheringRepository.findAllByUserIdaAndDate(user.getId(),currentDate);
         return allGatherings;
     }
 

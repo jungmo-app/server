@@ -24,8 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,9 +48,10 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserResponse findUser(UserCodeRequest userCode) {
-        return userDataProvider.findUserByUserCode(userCode.getUserCode())
-                .toDto();
+    public List<UserResponse> findUser(UserCodeRequest userCode) {
+        return userDataProvider.findUserByUserCode(userCode.getUserCode()).stream()
+                .map(User::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

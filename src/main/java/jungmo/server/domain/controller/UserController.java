@@ -8,6 +8,7 @@ import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
+import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,8 @@ public class UserController implements UserSwaggerController {
 
     @Override
     @GetMapping("/search")
-    public ResultDetailResponse<UserResponse> searchUser(@RequestBody @Valid UserCodeRequest userCodeDto) {
-        return new ResultDetailResponse<>(ResultCode.GET_USER_SUCCESS, userService.findUser(userCodeDto));
+    public ResultListResponse<UserResponse> searchUser(@RequestBody @Valid UserCodeRequest userCodeDto) {
+        return new ResultListResponse<>(ResultCode.GET_USER_SUCCESS, userService.findUser(userCodeDto));
     }
 
     @Override
