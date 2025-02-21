@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -20,6 +21,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long> {
             "where u.id = :userId " +
             "and gl.isFirstLocation = true " +
             "and g.isDeleted = false " +
-            "and (g.startDate <= CURRENT_DATE and g.endDate >= CURRENT_DATE)")
-    List<GatheringListResponse> findAllByUserId(@Param("userId") Long userId);
+            "and (g.startDate <= :currentDate and g.endDate >= :currentDate)")
+    List<GatheringListResponse> findAllByUserIdaAndDate(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 }

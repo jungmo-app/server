@@ -9,9 +9,10 @@ import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +40,9 @@ public class GatheringController implements GatheringSwaggerController {
     }
     @Override
     @GetMapping
-    public ResultListResponse<GatheringListResponse> getMyGathering(){
-        return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, gatheringService.findMyGatherings());
+    public ResultListResponse<GatheringListResponse> getMyGathering(
+            @RequestParam("currentDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate currentDate){
+        return new ResultListResponse<>(ResultCode.GET_MY_ALL_GATHERINGS, gatheringService.findMyGatherings(currentDate));
     }
     @Override
     @DeleteMapping("/{gatheringId}")

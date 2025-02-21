@@ -8,8 +8,12 @@ import jungmo.server.domain.dto.response.GatheringListResponse;
 import jungmo.server.domain.dto.response.GatheringResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
 
 @Tag(name = "Gathering", description = "모임 관련 API")
 public interface GatheringSwaggerController {
@@ -24,8 +28,9 @@ public interface GatheringSwaggerController {
     @Operation(summary = "모임 조회 API", description = "모임의 상세조회 API.")
     public ResultDetailResponse<GatheringResponse> getGathering(@PathVariable Long gatheringId);
 
-    @Operation(summary = "모임 목록 조회 API" , description = "로그인 된 사용자에게 예정된 모임들을 모두 조회한다.")
-    public ResultListResponse<GatheringListResponse> getMyGathering();
+    @Operation(summary = "모임 목록 조회 API" , description = "로그인 된 사용자에게 예정된 모임들을 모두 조회한다. currentDate 타입은 LocalDate 타입 입니다.")
+    public ResultListResponse<GatheringListResponse> getMyGathering(
+            @RequestParam("currentDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate currentDate);
 
     @Operation(summary = "모임 삭제 API", description = "모임을 삭제하는 API, write권한을 가진 사람만 삭제가 가능하다.")
     public ResultDetailResponse<Void> deleteGathering(@PathVariable Long gatheringId);
