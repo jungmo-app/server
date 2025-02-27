@@ -8,10 +8,7 @@ import jungmo.server.domain.dto.request.UserRequest;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -19,7 +16,7 @@ import java.io.IOException;
 public interface UserSwaggerController {
 
     @Operation(summary = "유저 조회 API", description = "고유코드로 유저를 조회하는 api.")
-    public ResultListResponse<UserResponse> searchUser(@RequestBody @Valid UserCodeRequest userCodeDto);
+    public ResultListResponse<UserResponse> searchUser(@RequestParam String userCode);
 
     @Operation(summary = "로그인 한 유저 정보반환 API", description = "로그인 한 유저의 정보를 반환하는 api")
     public ResultDetailResponse<UserResponse> getUser();

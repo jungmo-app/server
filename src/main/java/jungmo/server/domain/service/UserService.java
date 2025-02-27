@@ -48,8 +48,8 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<UserResponse> findUser(UserCodeRequest userCode) {
-        return userDataProvider.findUserByUserCode(userCode.getUserCode()).stream()
+    public List<UserResponse> findUser(String userCode) {
+        return userDataProvider.findUserByUserCode(userCode).stream()
                 .map(User::toDto)
                 .collect(Collectors.toList());
     }
