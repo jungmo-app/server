@@ -24,7 +24,7 @@ public class UserController implements UserSwaggerController {
 
     @Override
     @GetMapping("/search")
-    public ResultListResponse<UserResponse> searchUser(@RequestBody @Valid UserCodeRequest userCodeDto) {
+    public ResultListResponse<UserResponse> searchUser(@RequestParam UserCodeRequest userCodeDto) {
         return new ResultListResponse<>(ResultCode.GET_USER_SUCCESS, userService.findUser(userCodeDto));
     }
 
