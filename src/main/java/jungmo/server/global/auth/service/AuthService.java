@@ -65,7 +65,7 @@ public class AuthService {
 
         // 쿠키에 Access Token과 Refresh Token 저장
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(false)  // 개발 시 false
+                .httpOnly(true)
                 .secure(false)  // 개발 시 false
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
@@ -76,7 +76,7 @@ public class AuthService {
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(false) // 개발 시 false
+                .httpOnly(true)
                 .secure(false) // 개발 시 false
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
@@ -128,7 +128,7 @@ public class AuthService {
 
             // 쿠키에 Access Token과 Refresh Token 저장
             ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                    .httpOnly(false)  // 개발 시 false
+                    .httpOnly(true)
                     .secure(false)  // 개발 시 false
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
@@ -139,7 +139,7 @@ public class AuthService {
             response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                    .httpOnly(false) // 개발 시 false
+                    .httpOnly(true)
                     .secure(false) // 개발 시 false
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
@@ -211,7 +211,7 @@ public class AuthService {
             // 6. 쿠키에 새로운 토큰 저장
             // 쿠키에 Access Token과 Refresh Token 저장
             ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
-                    .httpOnly(false)  // 개발 시 false
+                    .httpOnly(true)  // 개발 시 false
                     .secure(false)  // 개발 시 false
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
@@ -222,7 +222,7 @@ public class AuthService {
             response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
-                    .httpOnly(false) // 개발 시 false
+                    .httpOnly(true) // 개발 시 false
                     .secure(false) // 개발 시 false
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
