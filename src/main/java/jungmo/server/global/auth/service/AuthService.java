@@ -21,6 +21,7 @@ import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import jungmo.server.domain.entity.User;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,9 +63,28 @@ public class AuthService {
         //  Redis에 Refresh Token 저장 (만료 시간 적용)
         redisService.saveRefreshToken(user.getEmail(), refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        //  Access Token과 Refresh Token을 쿠키에 저장
-        addCookie(response, "accessToken", accessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
-        addCookie(response, "refreshToken", refreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
+        // 쿠키에 Access Token과 Refresh Token 저장
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(false)  // 개발 시 false
+                .secure(false)  // 개발 시 false
+                .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                .path("/")
+                .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                .build();
+
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(false) // 개발 시 false
+                .secure(false) // 개발 시 false
+                .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                .path("/")
+                .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                .build();
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
     }
 
@@ -106,9 +126,28 @@ public class AuthService {
             // 4. Redis에 Refresh Token 저장 (만료 시간 적용)
             redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-            // 5. Access Token과 Refresh Token을 쿠키에 저장
-            addCookie(response, "accessToken", accessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
-            addCookie(response, "refreshToken", refreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
+            // 쿠키에 Access Token과 Refresh Token 저장
+            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+                    .httpOnly(false)  // 개발 시 false
+                    .secure(false)  // 개발 시 false
+                    .sameSite("None")  //  크로스 도메인 요청 허용
+                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                    .path("/")
+                    .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                    .build();
+
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+
+            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(false) // 개발 시 false
+                    .secure(false) // 개발 시 false
+                    .sameSite("None")  //  크로스 도메인 요청 허용
+                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                    .path("/")
+                    .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                    .build();
+
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
@@ -170,8 +209,29 @@ public class AuthService {
             redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
             // 6. 쿠키에 새로운 토큰 저장
-            addCookie(response, "accessToken", newAccessToken, (int) jwtTokenProvider.getAccessTokenExpiration());
-            addCookie(response, "refreshToken", newRefreshToken, (int) jwtTokenProvider.getRefreshTokenExpiration());
+            // 쿠키에 Access Token과 Refresh Token 저장
+            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
+                    .httpOnly(false)  // 개발 시 false
+                    .secure(false)  // 개발 시 false
+                    .sameSite("None")  //  크로스 도메인 요청 허용
+                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                    .path("/")
+                    .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                    .build();
+
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+
+            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+                    .httpOnly(false) // 개발 시 false
+                    .secure(false) // 개발 시 false
+                    .sameSite("None")  //  크로스 도메인 요청 허용
+                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                    .path("/")
+                    .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                    .build();
+
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
 
         } catch (ExpiredJwtException e) {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
@@ -182,14 +242,6 @@ public class AuthService {
         }catch (Exception e) {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
-    }
-
-    private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true); // 개발중에는 false로 해서 프론트측에서 접근할수있도록
-        cookie.setMaxAge(maxAge); // 쿠키 만료 시간 설정
-        cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
-        response.addCookie(cookie);
     }
 
 }
