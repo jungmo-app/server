@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -185,6 +186,28 @@ public class AuthService {
 
     }
 
+    public void deleteBrowserCache(RefreshTokenRequestDto request, HttpServletResponse response) {
+        String email = jwtTokenProvider.getEmailFromToken(request.getRefreshToken());
+        String savedRefreshToken = redisService.getRefreshToken(email);
+
+        if (savedRefreshToken == null || !savedRefreshToken.equals(request.getRefreshToken())) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .domain("jungmoserver.shop")
+                .path("/")
+                .maxAge(0)  // 기존 쿠키 즉시 삭제
+                .build();
+
+        response.addHeader("Set-Cookie", expiredRefreshTokenCookie.toString()); // 기존 쿠키 삭제
+        response.setHeader("Refresh-Token-Deleted", "true");
+
+    }
+
     /**
      * Refresh Token을 사용한 Access Token 재발급
      */
@@ -208,15 +231,6 @@ public class AuthService {
             // 5. Redis에 새로운 Refresh Token 저장
             redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-            ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refreshToken", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
-                    .domain("jungmoserver.shop")
-                    .path("/")
-                    .maxAge(0)  // 기존 쿠키 즉시 삭제
-                    .build();
-
             // 쿠키에 Access Token과 Refresh Token 저장
             ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
                     .httpOnly(true)
@@ -236,7 +250,6 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
                     .build();
 
-            response.addHeader("Set-Cookie", expiredRefreshTokenCookie.toString()); // 기존 쿠키 삭제
             response.addHeader("Set-Cookie", accessTokenCookie.toString());
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 

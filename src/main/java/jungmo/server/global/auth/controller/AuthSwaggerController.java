@@ -35,6 +35,9 @@ public interface AuthSwaggerController {
 
     @Operation(summary = "비밀번호 재설정하는 API, 비밀번호 잊어버린 사용자용", description = "비밀번호 재설정하는 api")
     public ResultDetailResponse<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest request);
+
+    @Operation(summary = "브라우저 쿠키 삭제 api" , description = "토큰 재발급 전 브라우저에 남은 리프레시토큰 무효화 하는 api")
+    public ResponseEntity<ResultDetailResponse<Void>> deleteBrowseCache(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response);
     @Operation(summary = "토큰 리프레시" , description = "액세스, 리프레시 토큰 재발급 API")
     public ResponseEntity<ResultDetailResponse<Void>> generateToken(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response);
 

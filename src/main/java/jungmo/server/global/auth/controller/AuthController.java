@@ -74,6 +74,14 @@ public class AuthController implements AuthSwaggerController{
     }
 
     @Override
+    @DeleteMapping("/browseCache")
+    public ResponseEntity<ResultDetailResponse<Void>> deleteBrowseCache(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response) {
+        authService.deleteBrowserCache(request,response);
+        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.REFRESH_SUCCESS,null);
+        return ResponseEntity.ok(result);
+    }
+
+    @Override
     @PostMapping("/refresh")
     public ResponseEntity<ResultDetailResponse<Void>> generateToken(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response) {
         authService.refreshToken(request,response);
