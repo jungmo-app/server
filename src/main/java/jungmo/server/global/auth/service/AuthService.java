@@ -186,52 +186,26 @@ public class AuthService {
 
     }
 
-    public void deleteBrowserCache(RefreshTokenRequestDto request, HttpServletResponse response) {
-        String email = jwtTokenProvider.getEmailFromToken(request.getRefreshToken());
-        String savedRefreshToken = redisService.getRefreshToken(email);
-
-        if (savedRefreshToken == null || !savedRefreshToken.equals(request.getRefreshToken())) {
-            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
-
-        ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
-                .domain("jungmoserver.shop")
-                .path("/")
-                .maxAge(0)  // 기존 쿠키 즉시 삭제
-                .build();
-
-        response.addHeader("Set-Cookie", expiredRefreshTokenCookie.toString()); // 기존 쿠키 삭제
-        response.setHeader("Refresh-Token-Deleted", "true");
-
-    }
-
     /**
      * Refresh Token을 사용한 Access Token 재발급
      */
     public void refreshToken(RefreshTokenRequestDto request, HttpServletResponse response) {
         try {
-            // 1. Refresh Token에서 이메일 추출
+            // Refresh Token에서 이메일 추출
             String email = jwtTokenProvider.getEmailFromToken(request.getRefreshToken());
 
-            // 2. Redis에서 저장된 Refresh Token 가져오기
+            // Redis에서 저장된 Refresh Token 가져오기
             String savedRefreshToken = redisService.getRefreshToken(email);
 
-            // 3. Refresh Token 검증
+            // Refresh Token 검증
             if (savedRefreshToken == null || !savedRefreshToken.equals(request.getRefreshToken())) {
                 throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
             }
 
-            // 4. 새로운 Access Token생성
+            // 새로운 Access Token생성
             String newAccessToken = jwtTokenProvider.generateAccessToken(email);
-            String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
 
-            // 5. Redis에 새로운 Refresh Token 저장
-            redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
-
-            // 쿠키에 Access Token과 Refresh Token 저장
+            // 쿠키에 Access Token 저장
             ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
                     .httpOnly(true)
                     .secure(true)
@@ -241,18 +215,7 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
                     .build();
 
-            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")  //  크로스 도메인 요청 허용
-                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
-                    .path("/")
-                    .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
-                    .build();
-
             response.addHeader("Set-Cookie", accessTokenCookie.toString());
-            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-
 
         } catch (ExpiredJwtException e) {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
