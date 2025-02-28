@@ -201,14 +201,22 @@ public class AuthService {
                 throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
             }
 
-            // 4. 새로운 Access Token과 Refresh Token 생성
+            // 4. 새로운 Access Token생성
             String newAccessToken = jwtTokenProvider.generateAccessToken(email);
             String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
 
             // 5. Redis에 새로운 Refresh Token 저장
             redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-            // 6. 쿠키에 새로운 토큰 저장
+            ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .domain("jungmoserver.shop")
+                    .path("/")
+                    .maxAge(0)  // 기존 쿠키 즉시 삭제
+                    .build();
+
             // 쿠키에 Access Token과 Refresh Token 저장
             ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
                     .httpOnly(true)
@@ -219,8 +227,6 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
                     .build();
 
-            response.setHeader("Set-Cookie", accessTokenCookie.toString());
-
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                     .httpOnly(true)
                     .secure(true)
@@ -230,6 +236,8 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
                     .build();
 
+            response.addHeader("Set-Cookie", expiredRefreshTokenCookie.toString()); // 기존 쿠키 삭제
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
 
