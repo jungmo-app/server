@@ -73,7 +73,7 @@ public class AuthService {
                 .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
                 .build();
 
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.setHeader("Set-Cookie", accessTokenCookie.toString());
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
@@ -136,7 +136,7 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
                     .build();
 
-            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+            response.setHeader("Set-Cookie", accessTokenCookie.toString());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)
@@ -219,7 +219,7 @@ public class AuthService {
                     .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
                     .build();
 
-            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+            response.setHeader("Set-Cookie", accessTokenCookie.toString());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                     .httpOnly(true)
