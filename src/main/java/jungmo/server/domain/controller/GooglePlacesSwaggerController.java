@@ -14,7 +14,7 @@ public interface GooglePlacesSwaggerController {
 
 
     @Operation(summary = "연관검색어 반환 API", description = "input에 맞는 연관검색어를 반환해주는 api")
-    public ResultListResponse<PlaceAutoCompleteDto> getAutocompleteWithPosition(
+    public ResultListResponse<String> getAutocompleteWithPosition(
             @RequestParam String input,
             @RequestParam(required = false) String language,
             @RequestParam(required = false) Double latitude,
