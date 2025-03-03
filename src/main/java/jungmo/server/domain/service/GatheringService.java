@@ -131,7 +131,7 @@ public class GatheringService {
     @Transactional(readOnly = true)
     public List<GatheringListResponse> findMyGatherings(LocalDate currentDate) {
         User user = userDataProvider.getUser();
-        List<GatheringListResponse> allGatherings = gatheringRepository.findAllByUserIdaAndDate(user.getId(),currentDate);
+        List<GatheringListResponse> allGatherings = gatheringRepository.findAllByUserIdAndDate(user.getId(),currentDate);
         return allGatherings;
     }
 
