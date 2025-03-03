@@ -20,7 +20,7 @@ public class GooglePlacesController implements GooglePlacesSwaggerController{
 
     @Override
     @GetMapping("/autocomplete")
-    public ResultListResponse<PlaceAutoCompleteDto> getAutocompleteWithPosition(
+    public ResultListResponse<String> getAutocompleteWithPosition(
             @RequestParam String input,
             @RequestParam(required = false) String language,
             @RequestParam(required = false) Double latitude,

@@ -24,7 +24,7 @@ public class GooglePlacesService {
     private String googleApiKey;
 
 
-    public List<PlaceAutoCompleteDto> getAutocompleteResults(String input, String language, Double latitude, Double longitude) {
+    public List<String> getAutocompleteResults(String input, String language, Double latitude, Double longitude) {
         String lang = (language != null) ? language : "ko";
         StringBuilder urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/autocomplete/json")
                 .append("?input=").append(input)
@@ -54,12 +54,9 @@ public class GooglePlacesService {
             JsonNode predictions = root.path("predictions");
             log.info("predictions = {}",predictions);
 
-            List<PlaceAutoCompleteDto> results = new ArrayList<>();
+            List<String> results = new ArrayList<>();
             for (JsonNode prediction : predictions) {
-                PlaceAutoCompleteDto place = new PlaceAutoCompleteDto(
-                        prediction.path("structured_formatting").path("main_text").asText(),
-                        prediction.path("place_id").asText());
-                results.add(place);
+                results.add(prediction.path("structured_formatting").path("main_text").asText());
             }
             return results;
 
