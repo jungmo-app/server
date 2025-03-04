@@ -27,6 +27,7 @@ public class User extends BaseTimeEntity {
     private String email;
 
     private String password;
+
     @Column(name = "user_role")
     private String role;
 

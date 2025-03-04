@@ -39,8 +39,12 @@ public class UserDataProvider {
     }
 
     public User findUserById(Long userId) {
-        return userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
+        if (user.getIsDeleted() == false) {
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+        }
+        return user;
     }
 
     public List<User> findUserByUserCode(String userCode) {

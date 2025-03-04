@@ -63,14 +63,23 @@ public class JwtTokenProvider {
     }
 
     public void invalidateTokens(String accessToken, String refreshToken) {
-        // 1. 리프레시 토큰 삭제
-        if (refreshToken != null) {
-            redisTemplate.delete(refreshToken);
+        String email = getEmailFromToken(refreshToken);
+
+        String storedToken = redisTemplate.opsForValue().get(email);
+        log.info("refreshToken: {}",refreshToken);
+        log.info("storedToken: {}",storedToken);
+        if (storedToken == null || !storedToken.replaceAll("\"","").equals(refreshToken)) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
+
+        redisTemplate.delete(email);
+
 
         // 2. 액세스 토큰 블랙리스트 등록
         long expiration = getExpiration(accessToken); // 토큰 만료 시간 계산
-        redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
+        if (expiration > 0) {
+            redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
+        }
     }
 
     // 토큰에서 Authentication 객체 생성

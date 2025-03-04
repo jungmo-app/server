@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByEmail(String email);
     boolean existsByUserCode(String userCode);
     Optional<User> findByEmail(String email);
-    @Query("SELECT u FROM User u WHERE u.userCode LIKE CONCAT(:userCode, '%')")
+    @Query("SELECT u FROM User u WHERE u.userCode LIKE CONCAT(:userCode, '%') AND u.isDeleted = false")
     List<User> findByUserCodeStartingWith(@Param("userCode") String userCode);
 
     Optional<User> findByResetToken(String resetToken);
