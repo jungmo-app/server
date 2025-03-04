@@ -31,11 +31,7 @@ public class Gathering {
 
     private String memo;
 
-    private Long allExpense;
-
     private Boolean isDeleted;  //삭제된 모임여부
-    @OneToMany(mappedBy = "gathering")
-    private List<Expense> expenseList = new ArrayList<>();
     @OneToMany(mappedBy = "gathering", cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<GatheringUser> gatheringUsers = new ArrayList<>();
     @OneToMany(mappedBy = "gathering",cascade = CascadeType.PERSIST,orphanRemoval = true)
@@ -66,16 +62,14 @@ public class Gathering {
     }
 
     @Builder
-    public Gathering(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, Long allExpense, Boolean isDeleted, List<Expense> expenseList, List<GatheringUser> gatheringUsers, List<GatheringLocation> gatheringLocations) {
+    public Gathering(Long id, String title, LocalDate startDate, LocalDate endDate, LocalTime startTime, String memo, Boolean isDeleted, List<GatheringUser> gatheringUsers, List<GatheringLocation> gatheringLocations) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
         this.memo = memo;
-        this.allExpense = allExpense;
         this.isDeleted = isDeleted;
-        this.expenseList = expenseList!= null ? expenseList : new ArrayList<>();
         this.gatheringUsers = gatheringUsers!= null ? gatheringUsers : new ArrayList<>();
         this.gatheringLocations = gatheringLocations!= null ? gatheringLocations : new ArrayList<>();
     }

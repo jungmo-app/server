@@ -51,7 +51,6 @@ public class GatheringService {
                 .endDate(dto.getEndDate())
                 .startTime(dto.getStartTime())
                 .memo(dto.getMemo())
-                .allExpense(0L)
                 .isDeleted(false)
                 .build();
         Gathering savedGathering = gatheringRepository.save(gathering);
