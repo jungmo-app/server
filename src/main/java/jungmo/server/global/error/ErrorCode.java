@@ -50,6 +50,7 @@ public enum ErrorCode {
     //GatheringLocation
     GATHERING_LOCATION_NOT_EXISTS(404,"GL001","해당하는 모임장소가 존재하지 않습니다"),
     INVALID_RELATION(404, "GL002", "해당 모임장소가 해당 모임에 포함되어 있지 않습니다."),
+    LOCATION_ALREADY_EXISTS(404, "GL003", "모임에 해당장소가 이미 포함되어 있습니다."),
 
     //Location
     LOCATION_NOT_EXISTS(404,"L001","해당하는 장소가 존재하지 않습니다");
