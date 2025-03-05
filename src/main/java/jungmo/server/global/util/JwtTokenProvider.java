@@ -82,6 +82,11 @@ public class JwtTokenProvider {
         }
     }
 
+    public Boolean isTokenBlacklisted(String token) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("BLACKLIST:" + token));
+    }
+
+
     // 토큰에서 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
         String email = getEmailFromToken(token);

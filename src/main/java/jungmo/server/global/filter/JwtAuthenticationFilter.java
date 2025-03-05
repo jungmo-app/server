@@ -34,7 +34,6 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -54,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && jwtTokenProvider.verifyToken(token)) {
             try {
                 // 🔍 블랙리스트 확인
-                if (isTokenBlacklisted(token)) {
+                if (jwtTokenProvider.isTokenBlacklisted(token)) {
                     throw new CustomJwtException(ErrorCode.ALREADY_LOGOUT_TOKEN);
                 }
 
@@ -99,10 +98,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-    /**
-     * 블랙리스트에 있는 토큰인지 확인
-     */
-    private boolean isTokenBlacklisted(String token) {
-        return redisTemplate.hasKey("BLACKLIST:" + token); // Redis에서 블랙리스트 확인
-    }
 }
