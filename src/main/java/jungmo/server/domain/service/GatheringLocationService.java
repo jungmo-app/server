@@ -7,6 +7,7 @@ import jungmo.server.domain.provider.GatheringLocationDataProvider;
 import jungmo.server.domain.provider.UserDataProvider;
 import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
+import jungmo.server.domain.service.policy.GatheringLocationPolicy;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,20 @@ public class GatheringLocationService {
     private final UserDataProvider userDataProvider;
     private final GatheringDataProvider gatheringDataProvider;
     private final GatheringLocationDataProvider gatheringLocationDataProvider;
+    private final GatheringLocationPolicy gatheringLocationPolicy;
 
     @Transactional
     public GatheringLocation saveGatheringLocation(Long gatheringId, LocationRequest dto, boolean isFirst) {
+        //모임에 포함된 장소 중복 있는지 검증.
+        gatheringLocationPolicy.isPlaceAlreadyExists(gatheringId, dto.getPlaceId());
+
+        //유저와 모임 조회
         User user = userDataProvider.getUser();
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
 
+        //권한이 있는지 체크
         validateWriteAuthority(user, gathering);
+
         Location location = locationService.handleLocationCreation(dto);
         GatheringLocation gatheringLocation = new GatheringLocation();
         gatheringLocation.setGathering(gathering);

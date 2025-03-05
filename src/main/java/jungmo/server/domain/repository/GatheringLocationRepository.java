@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GatheringLocationRepository extends JpaRepository<GatheringLocation, Long> {
+public interface GatheringLocationRepository extends JpaRepository<GatheringLocation, Long>, GatheringLocationCustum {
 
     @Query("select new jungmo.server.domain.dto.response.LocationResponse(gl.id,l.placeId,gl.isFirstLocation) " +
     "from GatheringLocation gl " +
