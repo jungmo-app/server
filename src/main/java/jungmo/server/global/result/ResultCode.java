@@ -17,6 +17,7 @@ public enum ResultCode {
     LOGOUT_SUCCESS(200, "U008", "로그아웃 완료"),
     DELETE_USER(200, "U009", "회원 탈퇴 완료"),
     SEND_EMAIL(200, "U010", "비밀번호 재설정 이메일 발송완료"),
+    IS_TOKEN_BLACKLIST(200, "U011", "블랙리스트 토큰 유무 반환완료"),
 
     //Gathering
     REGISTER_GATHERING(200,"G001","모임 생성 완료"),

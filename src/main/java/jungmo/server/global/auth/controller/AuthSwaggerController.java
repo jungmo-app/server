@@ -16,9 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "register/login", description = "회원가입 및 로그인 관련 API")
 public interface AuthSwaggerController {
+
+    @Operation(summary = "블랙리스트 있는지 확인하는 API" , description = "미들웨어에서 사용")
+    public ResultDetailResponse<Boolean> isBlackList(@RequestParam String accessToken);
 
     @Operation(summary = "회원가입" , description = "회원가입 API 액세스토큰 불필요")
     public ResponseEntity<ResultDetailResponse<Void>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response);

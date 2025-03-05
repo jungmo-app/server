@@ -19,6 +19,7 @@ import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
+import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,13 @@ public class AuthController implements AuthSwaggerController{
 
     private final AuthService authService;
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    @GetMapping("/isBlacklist")
+    public ResultDetailResponse<Boolean> isBlackList(@RequestParam String accessToken) {
+        return new ResultDetailResponse<>(ResultCode.IS_TOKEN_BLACKLIST, jwtTokenProvider.isTokenBlacklisted(accessToken));
+    }
 
     @Override
     @PostMapping("/register")
