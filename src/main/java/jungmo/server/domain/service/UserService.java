@@ -72,9 +72,10 @@ public class UserService {
             if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
                 String profileImageUrl = s3Service.uploadFile(userDto.getProfileImage(), user.getId());
                 user.setProfileImage(profileImageUrl);
-            } else {
+            } else if (Boolean.TRUE.equals(userDto.getDelete())){
                 user.setProfileImage(null); // 이미지 삭제 요청
             }
+
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
