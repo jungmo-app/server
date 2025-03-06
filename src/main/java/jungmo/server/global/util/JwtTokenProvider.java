@@ -36,7 +36,7 @@ public class JwtTokenProvider {
     private final RedisTemplate<String,String> redisTemplate;
     private final UserRepository userRepository;
 
-    private final long accessTokenExpiration = 1000 * 60; //1분
+    private final long accessTokenExpiration = 1000 * 60 * 30; //30분
     private final long refreshTokenExpiration = 1000 * 60 * 60 * 24 * 7;  //7일
 
     @PostConstruct
