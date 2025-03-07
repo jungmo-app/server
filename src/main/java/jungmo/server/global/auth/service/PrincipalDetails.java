@@ -43,8 +43,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
     }
 
-
-
     @Override
     public String getPassword() {
         return user.getPassword();
