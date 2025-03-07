@@ -3,6 +3,7 @@ package jungmo.server.domain.service;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
+import jungmo.server.domain.dto.response.UserInfoResponse;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.provider.UserDataProvider;
@@ -89,9 +90,9 @@ public class UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public UserResponse getUserInfo() {
+    public UserInfoResponse getUserInfo() {
         User user = userDataProvider.getUser();
-        return user.toDto();
+        return new UserInfoResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider());
     }
 
 

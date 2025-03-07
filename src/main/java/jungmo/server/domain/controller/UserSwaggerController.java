@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
+import jungmo.server.domain.dto.response.UserInfoResponse;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
@@ -19,7 +20,7 @@ public interface UserSwaggerController {
     public ResultListResponse<UserResponse> searchUser(@RequestParam String userCode);
 
     @Operation(summary = "로그인 한 유저 정보반환 API", description = "로그인 한 유저의 정보를 반환하는 api")
-    public ResultDetailResponse<UserResponse> getUser();
+    public ResultDetailResponse<UserInfoResponse> getUser();
 
     @Operation(summary = "로그인 한 유저 정보 수정 API", description = "로그인 한 유저의 정보를 수정하는 api")
     public ResultDetailResponse<UserResponse> updateProfile(@ModelAttribute @Valid UserRequest userDto) throws IOException;
