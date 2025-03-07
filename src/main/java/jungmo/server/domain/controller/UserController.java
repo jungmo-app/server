@@ -4,6 +4,7 @@ package jungmo.server.domain.controller;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
+import jungmo.server.domain.dto.response.UserInfoResponse;
 import jungmo.server.domain.dto.response.UserResponse;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.result.ResultCode;
@@ -30,7 +31,7 @@ public class UserController implements UserSwaggerController {
 
     @Override
     @GetMapping("/info")
-    public ResultDetailResponse<UserResponse> getUser() {
+    public ResultDetailResponse<UserInfoResponse> getUser() {
         return new ResultDetailResponse<>(ResultCode.GET_MY_INFO_SUCCESS, userService.getUserInfo());
     }
 
