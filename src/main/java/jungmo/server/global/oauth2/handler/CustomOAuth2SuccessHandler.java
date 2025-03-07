@@ -38,8 +38,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // 쿠키에 Access Token과 Refresh Token 저장
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(false)  // 개발 시 false
-                .secure(false)  // 개발 시 false
+                .httpOnly(true)
+                .secure(true)
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
@@ -49,8 +49,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(false) // 개발 시 false
-                .secure(false) // 개발 시 false
+                .httpOnly(true)
+                .secure(true)
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
@@ -60,7 +60,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         // 로그인 성공 후 리디렉트
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect("https://test.jungmoserver.shop:3100/login/oauth2");
     }
 
 }
