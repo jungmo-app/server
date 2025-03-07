@@ -50,9 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = jwtTokenProvider.resolveToken(request);
 
-        if (token != null && jwtTokenProvider.verifyToken(token)) {
+        if (token != null) {
             try {
-                // 🔍 블랙리스트 확인
+
+                if (!jwtTokenProvider.verifyToken(token)) {  // 변조된 토큰은 false 반환
+                    throw new JwtException("Invalid token");
+                }
+
+                // 블랙리스트 확인
                 if (jwtTokenProvider.isTokenBlacklisted(token)) {
                     throw new CustomJwtException(ErrorCode.ALREADY_LOGOUT_TOKEN);
                 }

@@ -106,17 +106,23 @@ public class JwtTokenProvider {
     public boolean verifyToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(secretKey) // 비밀키를 설정하여 파싱
-                    .parseClaimsJws(token);  // 주어진 토큰을 파싱하여 Claims 객체를 얻는다.
-            // 토큰의 만료 시간과 현재 시간비교
-            return claims.getBody()
-                    .getExpiration()
-                    .after(new Date());  // 만료 시간이 현재 시간 이후인지 확인하여 유효성 검사 결과를 반환
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token);
+
+            Date expiration = claims.getBody().getExpiration();
+            if (expiration.before(new Date())) {
+                throw new ExpiredJwtException(null, claims.getBody(), "Token is expired");  // ✅ 만료된 경우 예외 발생
+            }
+
+            return true; // 유효한 토큰이면 true 반환
+        } catch (ExpiredJwtException e) {
+            throw e; // 만료된 토큰이면 예외 던지기 (JwtAuthenticationFilter에서 처리)
         } catch (Exception e) {
             log.error("Invalid JWT signature: {}", token);
-            return false;
+            return false; // 변조된 토큰이면 false 반환
         }
     }
+
 
 
     public String getEmailFromToken(String token) {
