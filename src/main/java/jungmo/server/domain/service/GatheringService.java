@@ -13,6 +13,7 @@ import jungmo.server.domain.provider.UserDataProvider;
 import jungmo.server.domain.repository.GatheringLocationRepository;
 import jungmo.server.domain.repository.GatheringRepository;
 import jungmo.server.domain.repository.GatheringUserRepository;
+import jungmo.server.global.aop.annotation.CheckWritePermission;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -70,41 +71,33 @@ public class GatheringService {
         return savedGathering.getId();
     }
 
+    @CheckWritePermission
     @Transactional
     public void updateGathering(Long gatheringId, GatheringRequest gatheringDto) {
-        User user = userDataProvider.getUser();
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
-        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
-        if (gatheringUser.isPresent()) {
-            if (!gathering.getIsDeleted()) {
-                gathering.update(gatheringDto);
-                gatheringUserService.updateGatheringUsers(gatheringId,gatheringDto.getUserIds());
-                GatheringLocation firstLocation = gatheringLocationDataProvider.findFirstLocation(gatheringId);
-                //만나는 장소 업데이트
-                gatheringLocationService.deleteGatheringLocation(gatheringId, firstLocation.getId());
-                gatheringLocationService.saveGatheringLocation(gatheringId, gatheringDto.getMeetingLocation(), true);
 
-            } else {
-                throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
-            }
+        if (!gathering.getIsDeleted()) {
+            gathering.update(gatheringDto);
+            gatheringUserService.updateGatheringUsers(gatheringId,gatheringDto.getUserIds());
+            GatheringLocation firstLocation = gatheringLocationDataProvider.findFirstLocation(gatheringId);
+            //만나는 장소 업데이트
+            gatheringLocationService.deleteGatheringLocation(gatheringId, firstLocation.getId());
+            gatheringLocationService.saveGatheringLocation(gatheringId, gatheringDto.getMeetingLocation(), true);
+
         } else {
-            throw new BusinessException(ErrorCode.NOT_HAVE_WRITE_AUTHORITY);
+            throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
         }
     }
 
+    @CheckWritePermission
     @Transactional
     public void deleteGathering(Long gatheringId) {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
-        User user = userDataProvider.getUser();
-        Optional<GatheringUser> gatheringUser = gatheringUserRepository.findByAuthority(user, gathering, Authority.WRITE);
-        if (gatheringUser.isPresent()) {
-            if (!gathering.getIsDeleted()) {
-                gathering.setDeleted(true);
-            } else {
-                throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
-            }
+
+        if (!gathering.getIsDeleted()) {
+            gathering.setDeleted(true);
         } else {
-            throw new BusinessException(ErrorCode.NOT_HAVE_WRITE_AUTHORITY);
+            throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
         }
     }
 
