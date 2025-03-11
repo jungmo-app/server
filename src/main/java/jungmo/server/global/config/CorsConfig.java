@@ -15,7 +15,11 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*"); // 모든 Origin 허용
+        configuration.addAllowedOrigin("https://jungmoserver.shop");
+        configuration.addAllowedOrigin("https://localhost:3100");
+        configuration.addAllowedOrigin("https://test.jungmoserver.shop:3100");
+        configuration.addAllowedOrigin("http://localhost:3100");
+        configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
         configuration.addAllowedHeader("*"); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 인증 정보 포함 허용
