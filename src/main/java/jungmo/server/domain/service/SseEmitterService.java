@@ -20,7 +20,7 @@ import java.io.IOException;
 @Slf4j
 public class SseEmitterService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 ;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 30 ;
     private final EmitterRepository emitterRepository;
     private final UserDataProvider userDataProvider;
 
