@@ -37,10 +37,6 @@ public class SseEmitterService {
         sseEmitter.onCompletion(() -> emitterRepository.deleteById(userId));
         // Emmiter의 유효 시간 만료 시, emitter 삭제. 유효 시간의 만료는 연결된 시간동안 아무런 이벤트가 발생하지 않았음을 의미함
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(userId));
-
-        // 첫 구독 시, 이벤트 발생시킨다. sse 연결이 이루어진 후, 하나의 데이터로 전송되지 않는다면 sse 시간 만료 후 503에러 발생
-        sendToClient(userId, "subscribe event, userId : " + userId);
-
         return sseEmitter;
     }
 
