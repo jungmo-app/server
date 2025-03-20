@@ -166,7 +166,7 @@ public class AuthService {
         user.setResetToken(resetToken);
         user.setResetTokenExpiry(LocalDateTime.now().plusHours(1)); // 토큰 만료 시간 설정
 
-        String resetLink = "https://your-domain.com/reset-password?token=" + resetToken;
+        String resetLink = "https://front.jungmoserver.shop/reset-password?token=" + resetToken;
         emailService.sendEmail(email, resetLink);
     }
 
