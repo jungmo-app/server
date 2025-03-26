@@ -60,7 +60,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         // 로그인 성공 후 리디렉트
-        response.sendRedirect("https://test.jungmoserver.shop:3100/login/oauth2");
+        response.sendRedirect("https://front.jungmoserver.shop/login/oauth2");
     }
 
 }
