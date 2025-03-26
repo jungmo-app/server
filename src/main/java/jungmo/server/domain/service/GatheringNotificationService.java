@@ -1,11 +1,10 @@
 package jungmo.server.domain.service;
 
-import jungmo.server.domain.entity.Gathering;
-import jungmo.server.domain.entity.Notification;
-import jungmo.server.domain.entity.User;
+import jungmo.server.domain.entity.*;
 import jungmo.server.domain.event.NotificationEvent;
 import jungmo.server.domain.provider.GatheringDataProvider;
 import jungmo.server.domain.provider.UserDataProvider;
+import jungmo.server.domain.repository.GatheringUserRepository;
 import jungmo.server.domain.repository.NotificationRepository;
 import jungmo.server.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,19 +26,22 @@ public class GatheringNotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final GatheringDataProvider gatheringDataProvider;
+    private final GatheringUserRepository gatheringUserRepository;
 
 
 
     public void invite(Set<Long> userIds, Long gatheringId) {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        Optional<GatheringUser> writeUser = gatheringUserRepository.findByAuthorityAndGathering(gathering, Authority.WRITE);
+        String profileImage = writeUser.get().getUser().getProfileImage();
         List<User> users = userRepository.findAllById(userIds);
         String message = gathering.getTitle() + " 모임에 초대되었습니다.";
-        sendBulkNotification(users,gatheringId,message);
+        sendBulkNotification(users,gatheringId,message,profileImage,gathering.getTitle());
     }
 
-    public void sendBulkNotification(List<User> users, Long teamId, String message) {
+    public void sendBulkNotification(List<User> users, Long teamId, String message, String profileImage, String title) {
         List<Notification> notifications = users.stream()
-                .map(user -> new Notification(user, message, teamId))
+                .map(user -> new Notification(user, message, teamId,profileImage,title))
                 .collect(Collectors.toList());
 
         List<Long> notificationIds = notificationRepository.saveAll(notifications).stream()

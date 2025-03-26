@@ -20,6 +20,12 @@ public interface GatheringUserRepository extends JpaRepository<GatheringUser,Lon
     "where u = :user and g = :gathering and gu.authority = :authority and g.isDeleted = false")
     Optional<GatheringUser> findByAuthority(@Param("user") User user, @Param("gathering") Gathering gathering, @Param("authority") Authority authority);
 
+    @Query("select gu " +
+            "from GatheringUser gu " +
+            "join fetch gu.gathering g " +
+            "where g = :gathering and gu.authority = :authority and g.isDeleted = false")
+    Optional<GatheringUser> findByAuthorityAndGathering(@Param("gathering") Gathering gathering, @Param("authority") Authority authority);
+
     Optional<GatheringUser> findGatheringUserByUserIdAndGatheringId(@Param("user_id") Long userId, @Param("gathering_id") Long gatheringId);
     List<GatheringUser> findByGatheringId(Long gatheringId);
 
