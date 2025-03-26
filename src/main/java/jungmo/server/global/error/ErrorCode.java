@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+
     // Common
     INTERNAL_SERVER_ERROR(500, "C001", "internal server error"),
     INVALID_INPUT_VALUE(400, "C002", "invalid input type"),
@@ -41,7 +42,6 @@ public enum ErrorCode {
     ALREADY_CHOOSE(404, "G005", "이미 모임의 참석자이거나 거절한 모임입니다."),
     INVITATION_NOT_EXISTS(404, "G006", "수락 할 초대가 존재하지 않습니다."),
 
-
     //GatheringUser
     NOT_A_GATHERING_USER(404, "G007", "모임에 포함되지 않은 유저입니다."),
     GATHERING_USER_NOT_EXISTS(404, "G008", "해당 모임참석자가 존재하지 않습니다."),
@@ -57,4 +57,5 @@ public enum ErrorCode {
     private int status;
     private final String code;
     private final String message;
+
 }

@@ -26,7 +26,8 @@ public class Notification {
     private String message;
 
     private Long gatheringId;
-
+    private String profileImage;
+    private String title;
     private boolean isRead;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -36,6 +37,15 @@ public class Notification {
         this.user = user;
         this.message = message;
         this.gatheringId = gatheringId;
+        this.isRead = false;
+    }
+
+    public Notification(User user, String message, Long gatheringId, String profileImage, String title) {
+        this.user = user;
+        this.message = message;
+        this.gatheringId = gatheringId;
+        this.profileImage = profileImage;
+        this.title = title;
         this.isRead = false;
     }
 }

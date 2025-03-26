@@ -14,6 +14,8 @@ public class NotificationResponse {
     private Long userId;
     private String message;
     private Long gatheringId;
+    private String title;
+    private String profileImage;
     private String createdAt;
     private boolean isRead;
 
@@ -23,6 +25,8 @@ public class NotificationResponse {
         dto.setUserId(notification.getUser().getId());
         dto.setMessage(notification.getMessage());
         dto.setGatheringId(notification.getGatheringId());
+        dto.setTitle(notification.getTitle());
+        dto.setProfileImage(notification.getProfileImage());
         dto.setRead(notification.isRead());
         dto.setCreatedAt(notification.getCreatedAt().toString());
         return dto;
