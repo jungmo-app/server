@@ -18,6 +18,7 @@ public class CorsConfig {
         configuration.addAllowedOrigin("https://jungmoserver.shop");
         configuration.addAllowedOrigin("https://localhost:3100");
         configuration.addAllowedOrigin("https://front.jungmoserver.shop");
+        configuration.addAllowedOrigin("https://test.jungmoserver.shop:3100");
         configuration.addAllowedOrigin("http://localhost:3100");
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
