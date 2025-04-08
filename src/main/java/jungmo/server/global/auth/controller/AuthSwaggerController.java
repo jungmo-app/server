@@ -41,7 +41,9 @@ public interface AuthSwaggerController {
     public ResultDetailResponse<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest request);
 
     @Operation(summary = "토큰 리프레시" , description = "액세스, 리프레시 토큰 재발급 API")
-    public ResponseEntity<ResultDetailResponse<Void>> generateToken(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response);
+    public ResponseEntity<ResultDetailResponse<Void>> generateToken(
+            @CookieValue("refresh-token") String refreshToken,
+            HttpServletResponse response);
 
     @Operation(summary = "로그아웃" , description = "로그아웃 API")
     public ResponseEntity<?> logout(

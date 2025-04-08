@@ -188,16 +188,16 @@ public class AuthService {
     /**
      * Refresh Token을 사용한 Access Token 재발급
      */
-    public void refreshToken(RefreshTokenRequestDto request, HttpServletResponse response) {
+    public void refreshToken(String refreshToken, HttpServletResponse response) {
         try {
             // 1. Refresh Token에서 이메일 추출
-            String email = jwtTokenProvider.getEmailFromToken(request.getRefreshToken());
+            String email = jwtTokenProvider.getEmailFromToken(refreshToken);
 
             // 2. Redis에서 저장된 Refresh Token 가져오기
             String savedRefreshToken = redisService.getRefreshToken(email);
 
             // 3. Refresh Token 검증
-            if (savedRefreshToken == null || !savedRefreshToken.equals(request.getRefreshToken())) {
+            if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
                 throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
             }
 

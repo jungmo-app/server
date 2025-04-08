@@ -6,6 +6,7 @@ import jungmo.server.domain.service.NotificationService;
 import jungmo.server.domain.service.SseEmitterService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
+import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -28,8 +29,8 @@ public class SseController implements SseSwaggerController{
 
     @Override
     @GetMapping("/notifications")
-    public List<NotificationResponse> getNotifications() {
-        return notificationService.getNotifications();
+    public ResultListResponse<NotificationResponse> getNotifications() {
+        return new ResultListResponse<>(ResultCode.GET_NOTIFICATIONS,notificationService.getNotifications());
     }
 
     @Override

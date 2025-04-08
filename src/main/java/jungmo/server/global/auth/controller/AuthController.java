@@ -83,8 +83,10 @@ public class AuthController implements AuthSwaggerController{
 
     @Override
     @PostMapping("/refresh")
-    public ResponseEntity<ResultDetailResponse<Void>> generateToken(@RequestBody @Valid RefreshTokenRequestDto request, HttpServletResponse response) {
-        authService.refreshToken(request,response);
+    public ResponseEntity<ResultDetailResponse<Void>> generateToken(
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response) {
+        authService.refreshToken(refreshToken,response);
         ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.REFRESH_SUCCESS,null);
         return ResponseEntity.ok(result);
     }
