@@ -9,5 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationEvent {
     private final List<Long> notificationIds;
+    private final String startDate;
 }
 

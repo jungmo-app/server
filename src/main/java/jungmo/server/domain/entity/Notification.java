@@ -22,9 +22,7 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
     private String message;
-
     private Long gatheringId;
     private String profileImage;
     private String title;

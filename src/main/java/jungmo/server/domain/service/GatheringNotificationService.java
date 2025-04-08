@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,17 +37,18 @@ public class GatheringNotificationService {
         String profileImage = writeUser.get().getUser().getProfileImage();
         List<User> users = userRepository.findAllById(userIds);
         String message = gathering.getTitle() + " 모임에 초대되었습니다.";
-        sendBulkNotification(users,gatheringId,message,profileImage,gathering.getTitle());
+        LocalDate startDate = gathering.getStartDate();
+        sendBulkNotification(users,gatheringId,message,profileImage,gathering.getTitle(), String.valueOf(startDate));
     }
 
-    public void sendBulkNotification(List<User> users, Long teamId, String message, String profileImage, String title) {
+    public void sendBulkNotification(List<User> users, Long gatheringId, String message, String profileImage, String title, String startDate) {
         List<Notification> notifications = users.stream()
-                .map(user -> new Notification(user, message, teamId,profileImage,title))
+                .map(user -> new Notification(user, message, gatheringId,profileImage,title))
                 .collect(Collectors.toList());
 
         List<Long> notificationIds = notificationRepository.saveAll(notifications).stream()
                 .map(Notification::getId).collect(Collectors.toList());
 
-        eventPublisher.publishEvent(new NotificationEvent(notificationIds));
+        eventPublisher.publishEvent(new NotificationEvent(notificationIds,startDate));
     }
 }

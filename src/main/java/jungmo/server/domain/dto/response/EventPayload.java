@@ -11,6 +11,7 @@ public class EventPayload {
 
     private Long userId;
     private Long gatheringId;
+    private String startDate;
     private String createdAt;
     private String message;
     private boolean isRead;
