@@ -1,26 +1,21 @@
 package jungmo.server.global.auth.service;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import io.lettuce.core.RedisException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
-import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import jungmo.server.domain.entity.User;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -70,7 +64,7 @@ public class AuthService {
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
-                .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
                 .build();
 
         response.setHeader("Set-Cookie", accessTokenCookie.toString());
@@ -81,7 +75,7 @@ public class AuthService {
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
-                .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
@@ -133,7 +127,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                    .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
                     .build();
 
             response.setHeader("Set-Cookie", accessTokenCookie.toString());
@@ -144,7 +138,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                     .build();
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
@@ -216,7 +210,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                    .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
                     .build();
 
             response.setHeader("Set-Cookie", accessTokenCookie.toString());
@@ -227,7 +221,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                     .build();
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
