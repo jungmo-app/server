@@ -36,13 +36,13 @@ public class NotificationEventListener {
         List<Notification> notifications = notificationRepository.findAllById(event.getNotificationIds());
         if (!notifications.isEmpty()) {
             notifications.forEach(notification -> {
-                CompletableFuture.runAsync(() -> sendWithMultiThreading(notification, event.getStartDate()), notificationTaskExecutor);
+                CompletableFuture.runAsync(() -> sendWithMultiThreading(notification, event.getStartDate(), event.getSse()), notificationTaskExecutor);
             });
             log.info("✅ 트랜잭션 종료 후 알림 전송 완료!");
         }
     }
 
-    private void sendWithMultiThreading(Notification notification,String startDate) {
+    private void sendWithMultiThreading(Notification notification,String startDate, String sse) {
         try {
             sseEmitterService.sendToClient(
                     notification.getUser().getId(),
@@ -53,7 +53,8 @@ public class NotificationEventListener {
                             .createdAt(notification.getCreatedAt().toString())
                             .isRead(notification.isRead())
                             .message(notification.getMessage())
-                            .build());
+                            .build(),
+                    sse);
         } catch (Exception e) {
             log.error("❌ SSE 알림 전송 실패 : {}", e.getMessage(), e);
         }

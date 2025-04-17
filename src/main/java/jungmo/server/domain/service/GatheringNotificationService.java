@@ -37,11 +37,35 @@ public class GatheringNotificationService {
         String profileImage = writeUser.get().getUser().getProfileImage();
         List<User> users = userRepository.findAllById(userIds);
         String message = gathering.getTitle() + " 모임에 초대되었습니다.";
+        String sse = "invite";
         LocalDate startDate = gathering.getStartDate();
-        sendBulkNotification(users,gatheringId,message,profileImage,gathering.getTitle(), String.valueOf(startDate));
+        sendBulkNotification(users, gatheringId, message, profileImage, gathering.getTitle(), String.valueOf(startDate),sse);
     }
 
-    public void sendBulkNotification(List<User> users, Long gatheringId, String message, String profileImage, String title, String startDate) {
+
+    public void update(Set<Long> remainingUsers, Long gatheringId) {
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        Optional<GatheringUser> writeUser = gatheringUserRepository.findByAuthorityAndGathering(gathering, Authority.WRITE);
+        String profileImage = writeUser.get().getUser().getProfileImage();
+        List<User> users = userRepository.findAllById(remainingUsers);
+        String message = gathering.getTitle() + " 모임이 수정되었습니다.";
+        String sse = "update";
+        LocalDate startDate = gathering.getStartDate();
+        sendBulkNotification(users, gatheringId, message, profileImage, gathering.getTitle(), String.valueOf(startDate),sse);
+    }
+
+    public void delete(Set<Long> existingUsers, Long gatheringId) {
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        Optional<GatheringUser> writeUser = gatheringUserRepository.findByAuthorityAndGathering(gathering, Authority.WRITE);
+        String profileImage = writeUser.get().getUser().getProfileImage();
+        List<User> users = userRepository.findAllById(existingUsers);
+        String message = gathering.getTitle() + " 모임이 삭제되었습니다.";
+        String sse = "delete";
+        LocalDate startDate = gathering.getStartDate();
+        sendBulkNotification(users, gatheringId, message, profileImage, gathering.getTitle(), String.valueOf(startDate),sse);
+    }
+
+    public void sendBulkNotification(List<User> users, Long gatheringId, String message, String profileImage, String title, String startDate, String sse) {
         List<Notification> notifications = users.stream()
                 .map(user -> new Notification(user, message, gatheringId,profileImage,title))
                 .collect(Collectors.toList());
@@ -49,6 +73,6 @@ public class GatheringNotificationService {
         List<Long> notificationIds = notificationRepository.saveAll(notifications).stream()
                 .map(Notification::getId).collect(Collectors.toList());
 
-        eventPublisher.publishEvent(new NotificationEvent(notificationIds,startDate));
+        eventPublisher.publishEvent(new NotificationEvent(notificationIds,startDate,sse));
     }
 }

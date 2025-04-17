@@ -49,9 +49,6 @@ public class GatheringUserService {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
         User writeUser = userDataProvider.getUser();
 
-        //권한을 가지고 있는지 검증
-        gatheringUserPolicy.validateAuthority(writeUser, gathering, Authority.WRITE);
-
         // 초대 할 대상자 조회
         List<User> usersToUpdate = userRepository.findAllById(userIds);
         gatheringUserPolicy.validateUsers(usersToUpdate, userIds);
@@ -68,8 +65,13 @@ public class GatheringUserService {
 
         // 삭제 대상
         Set<Long> removedUserIds = new HashSet<>(existingUserIds);  //현재 모임에 존재하는 유저들
-        removedUserIds.removeAll(userIds);  //업데이트 될 유저들 중 현재 존재하는 유저들
-        removedUserIds.remove(writeUser.getId()); //현재 모임을 수정하는 유저
+        removedUserIds.removeAll(userIds);  //업데이트 될 유저들 중 현재 존재하는 유저들 제외
+        removedUserIds.remove(writeUser.getId()); //현재 모임을 수정하는 유저 제외
+
+
+        Set<Long> remainingUserIds = new HashSet<>(existingUserIds);
+        remainingUserIds.removeAll(removedUserIds);
+        gatheringNotificationService.update(remainingUserIds, gatheringId);
 
         removeUsersFromGathering(existingGatheringUsers, removedUserIds);
         addUsersToGathering(gathering, newUserIds);
@@ -113,13 +115,6 @@ public class GatheringUserService {
         });
         gatheringUserRepository.deleteAll(gatheringUsersToRemove); //Batch 삭제
     }
-
-    /**
-     * 모든 유저를 찾아왔는지 검증하는 로직
-     * @param usersToUpdate
-     * @param userIds
-     */
-
 
     /**
      * 모임 참석자 생성 로직

@@ -10,5 +10,6 @@ import java.util.List;
 public class NotificationEvent {
     private final List<Long> notificationIds;
     private final String startDate;
+    private final String sse;
 }
 
