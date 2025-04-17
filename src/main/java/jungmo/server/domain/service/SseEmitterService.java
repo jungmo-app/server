@@ -43,7 +43,7 @@ public class SseEmitterService {
     /**
      * 이벤트가 구독되어 있는 클라이언트에게 데이터를 전송
      */
-    public void sendToClient(Long userId, Object data) {
+    public void sendToClient(Long userId, Object data, String sse) {
         SseEmitter sseEmitter = emitterRepository.findById(userId);
 
         try {
@@ -52,7 +52,7 @@ public class SseEmitterService {
             sseEmitter.send(
                     SseEmitter.event()
                             .id(userId.toString())
-                            .name("sse")
+                            .name(sse)
                             .data(jsonData)
             );
             log.info("알림 전송 성공");

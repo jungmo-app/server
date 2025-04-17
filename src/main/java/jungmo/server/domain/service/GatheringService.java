@@ -42,6 +42,7 @@ public class GatheringService {
     private final GatheringDataProvider gatheringDataProvider;
     private final GatheringLocationDataProvider gatheringLocationDataProvider;
     private final GatheringLocationRepository gatheringLocationRepository;
+    private final GatheringNotificationService gatheringNotificationService;
 
     @Transactional
     public Long saveGathering(GatheringRequest dto) {
@@ -95,6 +96,11 @@ public class GatheringService {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
 
         if (!gathering.getIsDeleted()) {
+            List<GatheringUser> existingGatheringUsers = gatheringUserRepository.findByGatheringId(gatheringId);
+            Set<Long> existingUserIds = existingGatheringUsers.stream()
+                    .map(gu -> gu.getUser().getId())
+                    .collect(Collectors.toSet());
+            gatheringNotificationService.delete(existingUserIds, gatheringId);
             gathering.setDeleted(true);
         } else {
             throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
