@@ -47,7 +47,8 @@ public class NotificationEventListener {
             sseEmitterService.sendToClient(
                     notification.getUser().getId(),
                     EventPayload.builder()
-                            .userId(notification.getUser().getId())
+                            .notificationId(notification.getId())
+                            .profileImage(notification.getProfileImage())
                             .gatheringId(notification.getGatheringId())
                             .startDate(startDate)
                             .createdAt(notification.getCreatedAt().toString())

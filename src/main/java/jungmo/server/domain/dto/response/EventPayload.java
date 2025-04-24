@@ -9,7 +9,8 @@ import lombok.Data;
 @Data
 public class EventPayload {
 
-    private Long userId;
+    private Long notificationId;
+    private String profileImage;
     private Long gatheringId;
     private String startDate;
     private String createdAt;
