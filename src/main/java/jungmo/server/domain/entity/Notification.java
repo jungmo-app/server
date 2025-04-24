@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Notification {
+public class Notification{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,6 @@ public class Notification {
     private String profileImage;
     private String title;
     private boolean isRead;
-
     private LocalDateTime createdAt = LocalDateTime.now();
 
 

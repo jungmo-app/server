@@ -70,7 +70,8 @@ public class GatheringUserService {
 
 
         Set<Long> remainingUserIds = new HashSet<>(existingUserIds);
-        remainingUserIds.removeAll(removedUserIds);
+        remainingUserIds.removeAll(removedUserIds); // 모임에서 제거된 유저 제외
+        remainingUserIds.remove(writeUser.getId()); //현재 모임을 수정하는 유저 제외
         gatheringNotificationService.update(remainingUserIds, gatheringId);
 
         removeUsersFromGathering(gathering,existingGatheringUsers, removedUserIds);

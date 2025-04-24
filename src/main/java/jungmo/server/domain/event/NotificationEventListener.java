@@ -48,6 +48,7 @@ public class NotificationEventListener {
                     notification.getUser().getId(),
                     EventPayload.builder()
                             .notificationId(notification.getId())
+                            .title(notification.getTitle())
                             .profileImage(notification.getProfileImage())
                             .gatheringId(notification.getGatheringId())
                             .startDate(startDate)

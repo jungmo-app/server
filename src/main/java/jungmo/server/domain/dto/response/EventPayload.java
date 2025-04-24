@@ -10,6 +10,7 @@ import lombok.Data;
 public class EventPayload {
 
     private Long notificationId;
+    private String title;
     private String profileImage;
     private Long gatheringId;
     private String startDate;
