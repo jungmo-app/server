@@ -46,6 +46,11 @@ public class SseEmitterService {
     public void sendToClient(Long userId, Object data, String sse) {
         SseEmitter sseEmitter = emitterRepository.findById(userId);
 
+        if (sseEmitter == null) {
+            log.warn("SSE Emitter가 존재하지 않음. userId: {}", userId);
+            return;
+        }
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonData = objectMapper.writeValueAsString(data);

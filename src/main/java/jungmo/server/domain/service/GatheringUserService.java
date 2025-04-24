@@ -73,7 +73,7 @@ public class GatheringUserService {
         remainingUserIds.removeAll(removedUserIds);
         gatheringNotificationService.update(remainingUserIds, gatheringId);
 
-        removeUsersFromGathering(existingGatheringUsers, removedUserIds);
+        removeUsersFromGathering(gathering,existingGatheringUsers, removedUserIds);
         addUsersToGathering(gathering, newUserIds);
     }
 
@@ -102,7 +102,7 @@ public class GatheringUserService {
     }
 
     @Transactional
-    public void removeUsersFromGathering(List<GatheringUser> existingGatheringUsers, Set<Long> removedUserIds) {
+    public void removeUsersFromGathering(Gathering gathering, List<GatheringUser> existingGatheringUsers, Set<Long> removedUserIds) {
         List<GatheringUser> gatheringUsersToRemove = existingGatheringUsers.stream()
                 .filter(gu -> removedUserIds.contains(gu.getUser().getId()))
                 .toList();
@@ -113,6 +113,7 @@ public class GatheringUserService {
             gu.removeUser(gu.getUser()); // User와의 연관 관계 해제
             gu.removeGathering(gu.getGathering()); // Gathering과의 연관 관계 해제
         });
+        gatheringNotificationService.remove(removedUserIds, gathering.getId());
         gatheringUserRepository.deleteAll(gatheringUsersToRemove); //Batch 삭제
     }
 

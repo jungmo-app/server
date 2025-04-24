@@ -54,6 +54,17 @@ public class GatheringNotificationService {
         sendBulkNotification(users, gatheringId, message, profileImage, gathering.getTitle(), String.valueOf(startDate),sse);
     }
 
+    public void remove(Set<Long> remainingUsers, Long gatheringId) {
+        Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        Optional<GatheringUser> writeUser = gatheringUserRepository.findByAuthorityAndGathering(gathering, Authority.WRITE);
+        String profileImage = writeUser.get().getUser().getProfileImage();
+        List<User> users = userRepository.findAllById(remainingUsers);
+        String message = gathering.getTitle() + " 모임에서 퇴출되었습니다.";
+        String sse = "remove";
+        LocalDate startDate = gathering.getStartDate();
+        sendBulkNotification(users, gatheringId, message, profileImage, gathering.getTitle(), String.valueOf(startDate),sse);
+    }
+
     public void delete(Set<Long> existingUsers, Long gatheringId) {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
         Optional<GatheringUser> writeUser = gatheringUserRepository.findByAuthorityAndGathering(gathering, Authority.WRITE);
