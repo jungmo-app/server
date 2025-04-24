@@ -1,6 +1,7 @@
 package jungmo.server.domain.controller;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
@@ -12,6 +13,7 @@ import jungmo.server.global.result.ResultDetailResponse;
 import jungmo.server.global.result.ResultListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -43,12 +45,13 @@ public class UserController implements UserSwaggerController {
     }
 
     @DeleteMapping("/info")
-    public ResultDetailResponse<Void> deleteUser(
-            @RequestHeader("Authorization") String accessToken,
-            @CookieValue(value = "refreshToken", required = true) String refreshToken) {
+    public ResponseEntity<?> deleteUser(HttpServletResponse response,
+                                                 @RequestHeader("Authorization") String accessToken,
+                                                 @CookieValue(value = "refreshToken", required = true) String refreshToken) {
 
         accessToken = accessToken.replace("Bearer ", "");
-        userService.deleteUser(accessToken, refreshToken);
-        return new ResultDetailResponse<>(ResultCode.DELETE_USER, null);
+        userService.deleteUser(response,accessToken, refreshToken);
+        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.DELETE_USER, null);
+        return ResponseEntity.ok(result);
     }
 }

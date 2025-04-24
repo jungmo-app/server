@@ -3,6 +3,7 @@ package jungmo.server.global.util;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.service.CustomUserDetailsService;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -62,7 +64,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public void invalidateTokens(String accessToken, String refreshToken) {
+    public void invalidateTokens(HttpServletResponse response, String accessToken, String refreshToken) {
         String email = getEmailFromToken(refreshToken);
 
         String storedToken = redisTemplate.opsForValue().get(email);
@@ -80,6 +82,28 @@ public class JwtTokenProvider {
         if (expiration > 0) {
             redisTemplate.opsForValue().set("BLACKLIST:" + accessToken, "logged_out", Duration.ofMillis(expiration));
         }
+
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.setHeader("Set-Cookie", accessTokenCookie.toString());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
     }
 
     public Boolean isTokenBlacklisted(String token) {

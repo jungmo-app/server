@@ -93,12 +93,13 @@ public class AuthController implements AuthSwaggerController{
 
     @Override
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(
+    public ResponseEntity<?> logout(HttpServletResponse response,
             @RequestHeader(value = "Authorization", required = true) String accessToken,
             @CookieValue(value = "refreshToken", required = true) String refreshToken) {
         accessToken = accessToken.replace("Bearer ", "");
-        userService.logout(accessToken, refreshToken);
-        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGOUT_SUCCESS, null));
+        userService.logout(response,accessToken, refreshToken);
+        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.LOGOUT_SUCCESS, null);
+        return ResponseEntity.ok(result);
     }
 
 }

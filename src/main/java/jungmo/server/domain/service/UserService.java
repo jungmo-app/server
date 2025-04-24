@@ -1,5 +1,6 @@
 package jungmo.server.domain.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.UserCodeRequest;
 import jungmo.server.domain.dto.request.UserRequest;
@@ -141,9 +142,9 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String accessToken, String refreshToken) {
+    public void deleteUser(HttpServletResponse response,String accessToken, String refreshToken) {
         User user = userDataProvider.getUser();
-        tokenProvider.invalidateTokens(accessToken, refreshToken);
+        tokenProvider.invalidateTokens(response,accessToken, refreshToken);
 
         if ("kakao".equals(user.getProvider())) {
             kakaoService.unlinkKakaoAccount(user.getOauthId());
@@ -152,8 +153,8 @@ public class UserService {
     }
 
     @Transactional
-    public void logout(String accessToken, String refreshToken) {
-        tokenProvider.invalidateTokens(accessToken,refreshToken);
+    public void logout(HttpServletResponse response, String accessToken, String refreshToken) {
+        tokenProvider.invalidateTokens(response, accessToken,refreshToken);
     }
 
     // 고유 코드 생성 (6자리 랜덤 문자열)

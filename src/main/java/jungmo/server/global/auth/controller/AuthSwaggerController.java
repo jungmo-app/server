@@ -46,7 +46,7 @@ public interface AuthSwaggerController {
             HttpServletResponse response);
 
     @Operation(summary = "로그아웃" , description = "로그아웃 API")
-    public ResponseEntity<?> logout(
-            @RequestHeader(value = "Authorization", required = true) String accessToken,
-            @CookieValue(value = "refreshToken", required = true) String refreshToken);
+    public ResponseEntity<?> logout(HttpServletResponse response,
+                                    @RequestHeader(value = "Authorization", required = true) String accessToken,
+                                    @CookieValue(value = "refreshToken", required = true) String refreshToken);
 }
