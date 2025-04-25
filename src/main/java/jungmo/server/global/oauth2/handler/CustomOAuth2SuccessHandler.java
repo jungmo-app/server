@@ -43,7 +43,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
-                .maxAge((int) jwtTokenProvider.getAccessTokenExpiration())
+                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
 
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
@@ -54,7 +54,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
-                .maxAge((int) jwtTokenProvider.getRefreshTokenExpiration())
+                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
