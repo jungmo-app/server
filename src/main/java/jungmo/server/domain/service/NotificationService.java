@@ -49,7 +49,7 @@ public class NotificationService {
 
     @Transactional
     public List<NotificationResponse> getNotifications() {
-        List<Notification> notifications =  notificationRepository.findByUserId(userDataProvider.getUser().getId());
+        List<Notification> notifications =  notificationRepository.findByUserIdOrderByCreatedAtDesc(userDataProvider.getUser().getId());
         return notifications.stream()
                 .map(NotificationResponse::from).collect(Collectors.toList());
     }
