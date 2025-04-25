@@ -64,7 +64,7 @@ public class AuthService {
                 .sameSite("None")  //  크로스 도메인 요청 허용
                 .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
-                .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
+                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
 
         response.setHeader("Set-Cookie", accessTokenCookie.toString());
@@ -127,7 +127,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
+                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                     .build();
 
             response.setHeader("Set-Cookie", accessTokenCookie.toString());
@@ -210,7 +210,7 @@ public class AuthService {
                     .sameSite("None")  //  크로스 도메인 요청 허용
                     .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                     .path("/")
-                    .maxAge((int) (jwtTokenProvider.getAccessTokenExpiration() / 1000))
+                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                     .build();
 
             response.setHeader("Set-Cookie", accessTokenCookie.toString());
