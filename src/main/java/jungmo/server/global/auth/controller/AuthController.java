@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.dto.request.ResetPasswordRequest;
+import jungmo.server.domain.dto.response.UserInfoResponse;
 import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.domain.service.EmailService;
@@ -45,17 +46,17 @@ public class AuthController implements AuthSwaggerController{
 
     @Override
     @PostMapping("/register")
-    public ResponseEntity<ResultDetailResponse<Void>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response) {
-        authService.register(request,response);
-        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.REGISTER_SUCCESS, null);
+    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response) {
+        Long userId = authService.register(request, response);
+        ResultDetailResponse<UserInfoResponse> result = new ResultDetailResponse<>(ResultCode.REGISTER_SUCCESS, userService.getUserInfo(userId));
         return ResponseEntity.ok(result);
     }
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<ResultDetailResponse<Void>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response) {
-        authService.login(request,response);
-        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,null);
+    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response) {
+        Long userId = authService.login(request, response);
+        ResultDetailResponse<UserInfoResponse> result = new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,userService.getUserInfo(userId));
         return ResponseEntity.ok(result);
 
     }
