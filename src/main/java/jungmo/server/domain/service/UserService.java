@@ -96,6 +96,12 @@ public class UserService {
         return new UserInfoResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider());
     }
 
+    @Transactional(readOnly = true)
+    public UserInfoResponse getUserInfo(Long userId) {
+        User user = userDataProvider.findUserById(userId);
+        return new UserInfoResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider());
+    }
+
 
     @Transactional
     public User createUser(RegisterRequestDto request, String encodedPassword) {

@@ -43,7 +43,7 @@ public class AuthService {
     private final EmailService emailService;
 
     @Transactional
-    public void register(RegisterRequestDto request, HttpServletResponse response) {
+    public Long register(RegisterRequestDto request, HttpServletResponse response) {
         // 비밀번호 암호화 후 UserService에 위임하여 사용자 생성
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = userService.createUser(request, encodedPassword);
@@ -79,7 +79,7 @@ public class AuthService {
                 .build();
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-
+        return user.getId();
     }
 
     private void  saveAuthentication(User user) {
@@ -97,7 +97,7 @@ public class AuthService {
     /**
      * 로그인 처리
      */
-    public void login(LoginRequestDto request, HttpServletResponse response) {
+    public Long login(LoginRequestDto request, HttpServletResponse response) {
         try {
             // 1. 이메일과 비밀번호를 기반으로 인증
             Authentication authentication = authenticationManager.authenticate(
@@ -142,6 +142,7 @@ public class AuthService {
                     .build();
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+            return user.getId();
 
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
