@@ -94,13 +94,19 @@ public class GatheringService {
     @Transactional
     public void deleteGathering(Long gatheringId) {
         Gathering gathering = gatheringDataProvider.findGathering(gatheringId);
+        User user = userDataProvider.getUser();
 
         if (!gathering.getIsDeleted()) {
             List<GatheringUser> existingGatheringUsers = gatheringUserRepository.findByGatheringId(gatheringId);
             Set<Long> existingUserIds = existingGatheringUsers.stream()
                     .map(gu -> gu.getUser().getId())
+                    .filter(id -> !id.equals(user.getId()))
                     .collect(Collectors.toSet());
-            gatheringNotificationService.delete(existingUserIds, gatheringId);
+
+            if (!existingUserIds.isEmpty()) {  // 모임에 유저가 수정자만 있는 상황을 제외한 나머지경우
+                gatheringNotificationService.delete(existingUserIds, gatheringId);
+            }
+
             gathering.setDeleted(true);
         } else {
             throw new BusinessException(ErrorCode.GATHERING_ALREADY_DELETED);
