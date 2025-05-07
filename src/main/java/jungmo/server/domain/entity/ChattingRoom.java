@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -29,9 +30,13 @@ public class ChattingRoom {
 
     private LocalDate createdAt;
 
+    @Setter
+    private Boolean isDel;
+
     private ChattingRoom(Gathering gathering) {
         this.gathering = gathering;
         this.createdAt = LocalDate.now();
+        this.isDel = false;
     }
 
     public static ChattingRoom create(Gathering gathering) {
