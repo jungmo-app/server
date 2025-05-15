@@ -43,6 +43,7 @@ public class GatheringService {
     private final GatheringLocationDataProvider gatheringLocationDataProvider;
     private final GatheringLocationRepository gatheringLocationRepository;
     private final GatheringNotificationService gatheringNotificationService;
+    private final ChattingRoomService chattingRoomService;
 
     @Transactional
     public Long saveGathering(GatheringRequest dto) {
@@ -65,7 +66,10 @@ public class GatheringService {
         gatheringUserService.addUsersToGathering(savedGathering, userIds);
         // 만나는 장소와의 매핑, 저장
         GatheringLocation gatheringLocation = gatheringLocationService.saveGatheringLocation(gathering.getId(), dto.getMeetingLocation(), true);
+        // 채팅방 생성
+        ChattingRoom saveChattingRoom = chattingRoomService.saveChattingRoom(savedGathering);
 
+        log.info("ChattingRoom ID: {}", saveChattingRoom.getId());
         log.info("GatheringLocation ID: {}", gatheringLocation.getId());
         log.info("Gathering: {}", gatheringLocation.getGathering());
         log.info("Is initialized: {}", Hibernate.isInitialized(gatheringLocation.getGathering()));
@@ -106,6 +110,8 @@ public class GatheringService {
             if (!existingUserIds.isEmpty()) {  // 모임에 유저가 수정자만 있는 상황을 제외한 나머지경우
                 gatheringNotificationService.delete(existingUserIds, gatheringId);
             }
+
+            chattingRoomService.deleteChattingRoom(gatheringId);    // 채팅방 삭제
 
             gathering.setDeleted(true);
         } else {

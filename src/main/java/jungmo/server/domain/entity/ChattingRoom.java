@@ -1,5 +1,6 @@
 package jungmo.server.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,12 +26,14 @@ public class ChattingRoom {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gathering_id")
+    @JoinColumn(name = "gathering_id", nullable = false)
     private Gathering gathering;
 
+    @Column(nullable = false)
     private LocalDate createdAt;
 
     @Setter
+    @Column(nullable = false)
     private Boolean isDel;
 
     private ChattingRoom(Gathering gathering) {

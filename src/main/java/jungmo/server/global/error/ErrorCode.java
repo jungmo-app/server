@@ -53,7 +53,12 @@ public enum ErrorCode {
     LOCATION_ALREADY_EXISTS(404, "GL003", "모임에 해당장소가 이미 포함되어 있습니다."),
 
     //Location
-    LOCATION_NOT_EXISTS(404,"L001","해당하는 장소가 존재하지 않습니다");
+    LOCATION_NOT_EXISTS(404,"L001","해당하는 장소가 존재하지 않습니다"),
+
+    //ChattingRoom
+    CHATTING_ROOM_NOT_EXISTS(404, "R001", "해당하는 채팅방이 존재하지 않습니다."),
+    CHATTING_ROOM_ALREADY_DELETED(404, "R002", "이미 삭제된 채팅방입니다.");
+
     private int status;
     private final String code;
     private final String message;
