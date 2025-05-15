@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.CustomJwtException;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import software.amazon.awssdk.utils.IoUtils;
 
 @Slf4j
 @Component
@@ -46,7 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
 
         String token = jwtTokenProvider.resolveToken(request);
 
