@@ -21,11 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
             .addEndpoint("/connection")
-            .setAllowedOriginPatterns("*")
+            .setAllowedOriginPatterns("https://jungmoserver.shop")
             .withSockJS();
-        registry
-            .addEndpoint("/connection")
-            .setAllowedOriginPatterns("*");
         registry.setPreserveReceiveOrder(true);     // 메시지 순서 보장 ?
     }
 
@@ -36,10 +33,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setPreservePublishOrder(true);     // 메시지 순서 보장 ?
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(chatHandler);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(chatHandler);
+//    }
 
     /**
      * 하나의 WebSocket 메시지가 가질 수 있는 최대 바이트 크기 지정

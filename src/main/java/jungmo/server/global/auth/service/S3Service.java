@@ -53,4 +53,9 @@ public class S3Service {
         // 업로드된 파일의 URL 반환
         return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
     }
+
+    //TODO : 이미지 저장 예정
+    public String uploadImages(MultipartFile file) throws IOException {
+        return null;
+    }
 }

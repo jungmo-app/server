@@ -1,13 +1,18 @@
 package jungmo.server.domain.service;
 
+import java.util.List;
+import jungmo.server.domain.dto.response.UserChattingRoomsResponse;
 import jungmo.server.domain.entity.ChattingRoom;
 import jungmo.server.domain.entity.Gathering;
+import jungmo.server.domain.entity.User;
 import jungmo.server.domain.provider.ChattingRoomProvider;
-import jungmo.server.domain.repository.ChattingRoomRepository;
+import jungmo.server.domain.provider.UserDataProvider;
+import jungmo.server.domain.repository.chat.ChattingRoomRepository;
 import jungmo.server.global.aop.annotation.CheckWritePermission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -16,6 +21,8 @@ public class ChattingRoomService {
 
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingRoomProvider chattingRoomProvider;
+
+    private final UserDataProvider userDataProvider;
 
     @CheckWritePermission
     public ChattingRoom saveChattingRoom(Gathering gathering) {
@@ -29,5 +36,15 @@ public class ChattingRoomService {
         ChattingRoom chattingRoom = chattingRoomProvider.findChattingRoom(gatheringId);
 
         chattingRoom.setIsDel(true);
+    }
+
+    @Transactional(readOnly = true)
+    public UserChattingRoomsResponse getChattingRoomIdsByUserId() {
+
+        User user = userDataProvider.getUser();
+
+        List<Long> chatRoomIds = chattingRoomRepository.findChattingRooIdsByUserId(user.getId());
+
+        return new UserChattingRoomsResponse(user.getId(), chatRoomIds);
     }
 }
