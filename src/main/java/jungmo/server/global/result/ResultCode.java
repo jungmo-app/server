@@ -41,6 +41,8 @@ public enum ResultCode {
     PROCESSED_DELETE(200, "N002", "알림 삭제처리 완료"),
     GET_NOTIFICATIONS(200,"N003","알림목록 조회 완료"),
 
+    //ChattingRoom
+    GET_CHATTING_ROOM(200, "R001", "채팅방 목록 조회 완료"),
 
     //GoogleMap
     GET_AUTO_COMPLETE(200,"GM001","연관검색어 반환 완료");

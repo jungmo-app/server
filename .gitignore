@@ -47,3 +47,4 @@ out/
 
 ### test파일 ###
 /src/test/
+/src/main/resources/static

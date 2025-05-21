@@ -1,10 +1,10 @@
-package jungmo.server.domain.repository;
+package jungmo.server.domain.repository.chat;
 
 import java.util.Optional;
 import jungmo.server.domain.entity.ChattingRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChattingRoomRepository extends JpaRepository<ChattingRoom, Long> {
+public interface ChattingRoomRepository extends JpaRepository<ChattingRoom, Long>, ChattingRoomRepositoryCustom {
 
     Optional<ChattingRoom> findChattingRoomByGatheringId(Long gatheringId);
 }

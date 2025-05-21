@@ -1,7 +1,7 @@
 package jungmo.server.domain.provider;
 
 import jungmo.server.domain.entity.ChattingRoom;
-import jungmo.server.domain.repository.ChattingRoomRepository;
+import jungmo.server.domain.repository.chat.ChattingRoomRepository;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
