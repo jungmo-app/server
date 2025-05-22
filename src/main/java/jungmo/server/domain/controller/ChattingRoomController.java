@@ -1,6 +1,6 @@
 package jungmo.server.domain.controller;
 
-import jungmo.server.domain.dto.response.UserChattingRoomsResponse;
+import jungmo.server.domain.dto.response.chat.UserChattingRoomsResponse;
 import jungmo.server.domain.service.ChattingRoomService;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
@@ -22,4 +22,5 @@ public class ChattingRoomController implements ChattingRoomSwaggerController {
         return new ResultDetailResponse<>(ResultCode.GET_CHATTING_ROOM,
             chattingRoomService.getChattingRoomIdsByUserId());
     }
+
 }

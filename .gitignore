@@ -43,6 +43,7 @@ out/
 /src/main/resources/application-jwt.yml
 /src/main/resources/application-oauth.yml
 /src/main/resources/application-smtp.yml
+/src/main/resources/application-test.yml
 /src/main/resources/application.yml
 
 ### test파일 ###
