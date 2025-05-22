@@ -1,4 +1,4 @@
-package jungmo.server.domain.entity;
+package jungmo.server.domain.entity.chat;
 
 public enum MessageType {
     ENTER,

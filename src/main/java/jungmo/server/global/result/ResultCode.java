@@ -44,6 +44,10 @@ public enum ResultCode {
     //ChattingRoom
     GET_CHATTING_ROOM(200, "R001", "채팅방 목록 조회 완료"),
 
+    //Chat-Messages
+    REGISTER_CHAT_IMAGES(200, "M001", "채팅방 이미지 저장 완료"),
+    GET_CHATTING_MESSAGES(200, "M002", "채팅방 내역 전송 완료"),
+
     //GoogleMap
     GET_AUTO_COMPLETE(200,"GM001","연관검색어 반환 완료");
 

@@ -1,4 +1,4 @@
-package jungmo.server.domain.dto.response;
+package jungmo.server.domain.dto.response.chat;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

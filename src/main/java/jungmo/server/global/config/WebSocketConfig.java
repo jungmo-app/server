@@ -21,8 +21,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
             .addEndpoint("/connection")
-            .setAllowedOriginPatterns("https://jungmoserver.shop")
+            .setAllowedOriginPatterns("*")
+//            .setAllowedOrigins("https://front.jungmoserver.shop")
             .withSockJS();
+        registry
+            .addEndpoint("/connection")
+            .setAllowedOriginPatterns("*");
         registry.setPreserveReceiveOrder(true);     // 메시지 순서 보장 ?
     }
 

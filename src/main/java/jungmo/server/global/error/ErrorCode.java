@@ -57,7 +57,11 @@ public enum ErrorCode {
 
     //ChattingRoom
     CHATTING_ROOM_NOT_EXISTS(404, "R001", "해당하는 채팅방이 존재하지 않습니다."),
-    CHATTING_ROOM_ALREADY_DELETED(404, "R002", "이미 삭제된 채팅방입니다.");
+    CHATTING_ROOM_ALREADY_DELETED(404, "R002", "이미 삭제된 채팅방입니다."),
+    CHATTING_ROOM_ALREADY_EXISTS(409, "ROO3", "이미 존재하는 채팅방입니다."),
+
+    //ChattingMessage
+    INVALID_CHATTING_MESSAGE_TYPE(400, "M001", "해당되는 채팅 메시지 타입이 존재하지 않습니다.");
 
     private int status;
     private final String code;

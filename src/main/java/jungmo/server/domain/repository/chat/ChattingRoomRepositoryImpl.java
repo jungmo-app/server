@@ -36,4 +36,24 @@ public class ChattingRoomRepositoryImpl implements ChattingRoomRepositoryCustom 
             )
             .fetch();
     }
+
+    @Override
+    public List<Long> findChattingRoomUserIdsByChattingRoomId(Long chattingRoomId) {
+
+        QChattingRoom cr = QChattingRoom.chattingRoom;
+        QGathering gr = QGathering.gathering;
+        QGatheringUser gu = QGatheringUser.gatheringUser;
+
+        return jpaQueryFactory
+            .select(gu.user.id)
+            .from(cr)
+            .join(gr).on(gr.id.eq(cr.gathering.id))
+            .join(gu).on(gu.gathering.id.eq(gr.id))
+            .where(
+                cr.id.eq(chattingRoomId),
+                gr.isDeleted.isFalse(),
+                cr.isDel.isFalse()
+            )
+            .fetch();
+    }
 }
