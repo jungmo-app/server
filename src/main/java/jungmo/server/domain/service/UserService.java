@@ -11,6 +11,7 @@ import jungmo.server.domain.provider.UserDataProvider;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.SecurityUserDto;
+import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.auth.service.AuthService;
 import jungmo.server.global.auth.service.KakaoService;
 import jungmo.server.global.auth.service.PrincipalDetails;
@@ -101,6 +102,7 @@ public class UserService {
         User user = userDataProvider.findUserById(userId);
         return new UserInfoResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider());
     }
+
 
 
     @Transactional
