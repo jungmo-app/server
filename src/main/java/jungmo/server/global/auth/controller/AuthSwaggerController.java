@@ -8,10 +8,10 @@ import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.dto.request.ResetPasswordRequest;
-import jungmo.server.domain.dto.response.UserInfoResponse;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
-import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
+import jungmo.server.global.auth.dto.response.AccessTokenResponse;
+import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -26,10 +26,10 @@ public interface AuthSwaggerController {
     public ResultDetailResponse<Boolean> isBlackList(@RequestParam String accessToken);
 
     @Operation(summary = "회원가입" , description = "회원가입 API 액세스토큰 불필요")
-    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response);
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response);
 
     @Operation(summary = "로그인" , description = "로그인 API 액세스토큰 불필요")
-    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response);
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response);
 
     @Operation(summary = "로그인 한 유저 비밀번호 수정 API", description = "로그인 한 유저의 비밀번호를 수정하는 api")
     public ResultDetailResponse<Void> changePassword(
@@ -42,7 +42,7 @@ public interface AuthSwaggerController {
     public ResultDetailResponse<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest request);
 
     @Operation(summary = "토큰 리프레시" , description = "액세스, 리프레시 토큰 재발급 API")
-    public ResponseEntity<ResultDetailResponse<Void>> generateToken(
+    public ResponseEntity<ResultDetailResponse<AccessTokenResponse>> generateToken(
             @CookieValue("refresh-token") String refreshToken,
             HttpServletResponse response);
 

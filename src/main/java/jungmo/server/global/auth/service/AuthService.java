@@ -11,6 +11,8 @@ import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
+import jungmo.server.global.auth.dto.response.AccessTokenResponse;
+import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import jungmo.server.global.util.JwtTokenProvider;
@@ -43,7 +45,7 @@ public class AuthService {
     private final EmailService emailService;
 
     @Transactional
-    public Long register(RegisterRequestDto request, HttpServletResponse response) {
+    public UserLoginResponse register(RegisterRequestDto request, HttpServletResponse response) {
         // 비밀번호 암호화 후 UserService에 위임하여 사용자 생성
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = userService.createUser(request, encodedPassword);
@@ -57,17 +59,7 @@ public class AuthService {
         //  Redis에 Refresh Token 저장 (만료 시간 적용)
         redisService.saveRefreshToken(user.getEmail(), refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        // 쿠키에 Access Token과 Refresh Token 저장
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")  //  크로스 도메인 요청 허용
-                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
-                .path("/")
-                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
-                .build();
-
-        response.setHeader("Set-Cookie", accessTokenCookie.toString());
+        UserLoginResponse userResponse = new UserLoginResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider(),accessToken);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
@@ -79,7 +71,7 @@ public class AuthService {
                 .build();
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-        return user.getId();
+        return userResponse;
     }
 
     private void  saveAuthentication(User user) {
@@ -97,7 +89,7 @@ public class AuthService {
     /**
      * 로그인 처리
      */
-    public Long login(LoginRequestDto request, HttpServletResponse response) {
+    public UserLoginResponse login(LoginRequestDto request, HttpServletResponse response) {
         try {
             // 1. 이메일과 비밀번호를 기반으로 인증
             Authentication authentication = authenticationManager.authenticate(
@@ -119,18 +111,7 @@ public class AuthService {
 
             // 4. Redis에 Refresh Token 저장 (만료 시간 적용)
             redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
-
-            // 쿠키에 Access Token과 Refresh Token 저장
-            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")  //  크로스 도메인 요청 허용
-                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
-                    .path("/")
-                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
-                    .build();
-
-            response.setHeader("Set-Cookie", accessTokenCookie.toString());
+            UserLoginResponse userResponse = new UserLoginResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider(),accessToken);
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)
@@ -142,7 +123,7 @@ public class AuthService {
                     .build();
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-            return user.getId();
+            return userResponse;
 
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
@@ -183,7 +164,7 @@ public class AuthService {
     /**
      * Refresh Token을 사용한 Access Token 재발급
      */
-    public void refreshToken(String refreshToken, HttpServletResponse response) {
+    public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
         try {
             // 1. Refresh Token에서 이메일 추출
             String email = jwtTokenProvider.getEmailFromToken(refreshToken);
@@ -204,17 +185,6 @@ public class AuthService {
             redisService.saveRefreshToken(email, newRefreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
             // 6. 쿠키에 새로운 토큰 저장
-            // 쿠키에 Access Token과 Refresh Token 저장
-            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")  //  크로스 도메인 요청 허용
-                    .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
-                    .path("/")
-                    .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
-                    .build();
-
-            response.setHeader("Set-Cookie", accessTokenCookie.toString());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                     .httpOnly(true)
@@ -226,7 +196,7 @@ public class AuthService {
                     .build();
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-
+            return new AccessTokenResponse(newAccessToken);
 
         } catch (ExpiredJwtException e) {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);

@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -36,18 +37,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         // Redis에 Refresh Token 저장
         redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        // 쿠키에 Access Token과 Refresh Token 저장
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")  //  크로스 도메인 요청 허용
-                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
-                .path("/")
-                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
-                .build();
-
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
-
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
@@ -60,7 +49,12 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         // 로그인 성공 후 리디렉트
-        response.sendRedirect("https://front.jungmoserver.shop/login/oauth2");
+        String redirectUrl = UriComponentsBuilder.fromUriString("https://front.jungmoserver.shop/login/oauth2")
+                .queryParam("accessToken", accessToken)
+                .build()
+                .toUriString();
+
+        response.sendRedirect(redirectUrl);
     }
 
 }

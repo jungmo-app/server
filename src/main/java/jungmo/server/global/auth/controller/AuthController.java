@@ -15,11 +15,14 @@ import jungmo.server.domain.service.UserService;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
+import jungmo.server.global.auth.dto.response.AccessTokenResponse;
+import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.auth.service.AuthService;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
 import jungmo.server.global.result.ResultCode;
 import jungmo.server.global.result.ResultDetailResponse;
+import jungmo.server.global.result.ResultListResponse;
 import jungmo.server.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,18 +49,14 @@ public class AuthController implements AuthSwaggerController{
 
     @Override
     @PostMapping("/register")
-    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response) {
-        Long userId = authService.register(request, response);
-        ResultDetailResponse<UserInfoResponse> result = new ResultDetailResponse<>(ResultCode.REGISTER_SUCCESS, userService.getUserInfo(userId));
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> register(@RequestBody @Valid RegisterRequestDto request, HttpServletResponse response) {
+        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.REGISTER_SUCCESS, authService.register(request, response)));
     }
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<ResultDetailResponse<UserInfoResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response) {
-        Long userId = authService.login(request, response);
-        ResultDetailResponse<UserInfoResponse> result = new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,userService.getUserInfo(userId));
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response) {
+        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,authService.login(request, response)));
 
     }
     @Override
@@ -84,12 +83,10 @@ public class AuthController implements AuthSwaggerController{
 
     @Override
     @PostMapping("/refresh")
-    public ResponseEntity<ResultDetailResponse<Void>> generateToken(
+    public ResponseEntity<ResultDetailResponse<AccessTokenResponse>> generateToken(
             @CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response) {
-        authService.refreshToken(refreshToken,response);
-        ResultDetailResponse<Void> result = new ResultDetailResponse<>(ResultCode.REFRESH_SUCCESS,null);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.REFRESH_SUCCESS,authService.refreshToken(refreshToken, response)));
     }
 
     @Override
