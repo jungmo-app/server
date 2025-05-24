@@ -56,7 +56,7 @@ public class ChattingRoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<Long> getChattingRoomUserByChattingRoomId(Long chattingRoomId) {
+    public List<User> getChattingRoomUserByChattingRoomId(Long chattingRoomId) {
 
         return chattingRoomRepository.findChattingRoomUserIdsByChattingRoomId(chattingRoomId);
     }

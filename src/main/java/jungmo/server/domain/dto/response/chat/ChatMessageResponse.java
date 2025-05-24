@@ -6,9 +6,11 @@ import java.time.LocalTime;
 import java.util.List;
 import jungmo.server.domain.entity.chat.MessageType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class ChatMessageResponse {
 

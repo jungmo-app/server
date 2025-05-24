@@ -6,6 +6,7 @@ import java.util.List;
 import jungmo.server.domain.entity.QChattingRoom;
 import jungmo.server.domain.entity.QGathering;
 import jungmo.server.domain.entity.QGatheringUser;
+import jungmo.server.domain.entity.User;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -38,14 +39,14 @@ public class ChattingRoomRepositoryImpl implements ChattingRoomRepositoryCustom 
     }
 
     @Override
-    public List<Long> findChattingRoomUserIdsByChattingRoomId(Long chattingRoomId) {
+    public List<User> findChattingRoomUserIdsByChattingRoomId(Long chattingRoomId) {
 
         QChattingRoom cr = QChattingRoom.chattingRoom;
         QGathering gr = QGathering.gathering;
         QGatheringUser gu = QGatheringUser.gatheringUser;
 
         return jpaQueryFactory
-            .select(gu.user.id)
+            .select(gu.user)
             .from(cr)
             .join(gr).on(gr.id.eq(cr.gathering.id))
             .join(gu).on(gu.gathering.id.eq(gr.id))

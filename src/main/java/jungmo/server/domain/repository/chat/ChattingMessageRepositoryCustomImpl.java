@@ -42,7 +42,7 @@ public class ChattingMessageRepositoryCustomImpl implements ChattingMessageRepos
             content,
             pageable,
             () -> mongoTemplate.count(
-                Query.of(query).limit(-1).skip(-1), // count 쿼리에 limit, skip 제거
+                Query.of(query).limit(-1).skip(-1),
                 ChatMessageResponse.class
             )
         );

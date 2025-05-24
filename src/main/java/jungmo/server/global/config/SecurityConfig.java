@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/auth/**", "/oauth2/**","/login/**", "/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/gatherings/{gatheringId}","/maps/**").permitAll()// 인증 없이 접근 가능 경로
-                                .requestMatchers("/index.html", "app.js", "main.css", "favicon.ico", "/connection").permitAll()      // 테스트용
+                                .requestMatchers("/index.html", "app.js", "main.css", "favicon.ico", "/connection/**").permitAll()      // 테스트용
                                 .anyRequest().authenticated()
                         // 그 외 경로는 인증 필요
                 )

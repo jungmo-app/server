@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
 
 @Slf4j
-public class WebSocketTokenProvider implements JwtProvider{
+public class WebSocketTokenProvider implements JwtProvider {
 
     private final String token;
 

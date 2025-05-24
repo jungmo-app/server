@@ -1,7 +1,10 @@
 package jungmo.server.global.interceptor;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.annotation.Nullable;
+import java.security.Principal;
 import java.util.Objects;
+import jungmo.server.global.auth.service.PrincipalDetails;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.CustomJwtException;
 import jungmo.server.global.util.JwtTokenProvider;
@@ -22,6 +25,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 @Slf4j
 @Configuration
@@ -35,42 +39,38 @@ public class ChatHandler implements ChannelInterceptor {
     public Message<?> preSend(@Nullable Message<?> message, @Nullable MessageChannel channel) {
 
         StompHeaderAccessor accessor = null;
-
         if (Objects.nonNull(message)) {
             accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         }
 
         if (Objects.nonNull(accessor)) {
-
             if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                String token = String.valueOf(accessor.getNativeHeader("Authorization"));
+                try {
+                    String token = accessor.getFirstNativeHeader("Authorization");
+                    JwtProvider jwtProvider = WebSocketTokenProvider.of(token);
+                    String accessToken = jwtProvider.resolveToken();
 
-                JwtProvider jwtProvider = WebSocketTokenProvider.of(token);
+                    if (!jwtTokenProvider.verifyToken(accessToken)) {
+                        throw new JwtException("Invalid token");
+                    }
 
-                String accessToken = jwtProvider.resolveToken();
+                    if (jwtTokenProvider.isTokenBlacklisted(accessToken)) {
+                        throw new CustomJwtException(ErrorCode.ALREADY_LOGOUT_TOKEN);
+                    }
 
-                if (!jwtTokenProvider.verifyToken(token)) {
-                    throw new JwtException("Invalid token");
+                    Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
+
+                    accessor.setUser(auth);
+                } catch (ExpiredJwtException e) {
+                    log.warn("Expired JWT token: {}", e.getMessage());
+                } catch (JwtException e) {
+                    log.warn("Invalid JWT token: {}", e.getMessage());
+                } catch (CustomJwtException e) {
+                    log.warn("Blacklisted JWT token: {}", e.getMessage());
                 }
-
-                if (jwtTokenProvider.isTokenBlacklisted(token)) {
-                    throw new CustomJwtException(ErrorCode.ALREADY_LOGOUT_TOKEN);
-                }
-
-                Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
-
-                accessor.setUser(auth);
             }
-
         }
-        return message;
-    }
 
-    //TODO : 로그인 시 이 부분에서 Redis에 담아줄 듯? CONNECT -> accessor에 setUser 해주고
-    @EventListener
-    public void socketConnectedEventHandler(SessionConnectedEvent event) {
-        System.out.println("Socket connected :" + event);
-        System.out.println("Socket connected user : " + event.getUser());
-        System.out.println("Socket connected message : " + event.getMessage());
+        return message;
     }
 }
