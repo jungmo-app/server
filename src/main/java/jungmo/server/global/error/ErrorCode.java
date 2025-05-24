@@ -27,6 +27,7 @@ public enum ErrorCode {
     SOCIAL_UNLINK_FAILED(400,"C016","카카오 연동 해제 실패."),
     USER_DELETED(400,"C017","이미 탈퇴한 유저입니다."),
     EMAIL_SEND_FAILED(400, "C018", "이메일 전송 실패"),
+    INVALID_AUTH_PRINCIPAL(401, "C019", "인증 정보가 유효하지 않거나 사용자 세부 정보를 찾을 수 없습니다."),
 
     //Token
     TOKEN_EXPIRED(401, "T001", "토큰이 만료되었습니다."),
@@ -59,6 +60,7 @@ public enum ErrorCode {
     CHATTING_ROOM_NOT_EXISTS(404, "R001", "해당하는 채팅방이 존재하지 않습니다."),
     CHATTING_ROOM_ALREADY_DELETED(404, "R002", "이미 삭제된 채팅방입니다."),
     CHATTING_ROOM_ALREADY_EXISTS(409, "ROO3", "이미 존재하는 채팅방입니다."),
+    CHATTING_ROOM_MEMBERS_NOT_EXISTS(404,"R004", "해당 채팅방에 참여하는 인원이 존재하지 않습니다."),
 
     //ChattingMessage
     INVALID_CHATTING_MESSAGE_TYPE(400, "M001", "해당되는 채팅 메시지 타입이 존재하지 않습니다.");

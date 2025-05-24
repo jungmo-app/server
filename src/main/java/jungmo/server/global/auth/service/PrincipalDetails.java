@@ -1,5 +1,6 @@
 package jungmo.server.global.auth.service;
 
+import java.security.Principal;
 import jungmo.server.domain.entity.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Getter
-public class PrincipalDetails implements UserDetails, OAuth2User {
+public class PrincipalDetails implements UserDetails, OAuth2User, Principal {
 
     private final User user;
     private Map<String, Object> attributes;
