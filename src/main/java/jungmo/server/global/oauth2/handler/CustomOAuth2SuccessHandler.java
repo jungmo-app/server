@@ -45,7 +45,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
 
-        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
 
 
         // 로그인 성공 후 리디렉트
