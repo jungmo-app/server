@@ -35,14 +35,12 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         // Redis에 Refresh Token 저장
         redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        String domain = request.getServerName();
-        log.info("resolved domain from request: {}", domain);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")  //  크로스 도메인 요청 허용
-                .domain(domain)  //  쿠키가 전송될 도메인 설정
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
                 .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
