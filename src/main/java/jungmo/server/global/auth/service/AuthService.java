@@ -9,9 +9,11 @@ import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
+import jungmo.server.global.auth.dto.request.KakaoCodeRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
+import jungmo.server.global.auth.dto.response.KakaoUserResponse;
 import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
@@ -43,6 +45,7 @@ public class AuthService {
     private final RedisService redisService;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final KakaoService kakaoService;
 
     @Transactional
     public UserLoginResponse register(RegisterRequestDto request, HttpServletResponse response) {
@@ -128,6 +131,57 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
         }
+    }
+
+    @Transactional
+    public UserLoginResponse kakaoAppLogin(KakaoCodeRequest kakaoCodeRequest,HttpServletResponse response) {
+        KakaoUserResponse userInfo = kakaoService.getUserEmail(kakaoCodeRequest.getCode());
+
+        User user = userRepository.findByEmail(userInfo.getEmail()).orElse(null);
+
+        if (user != null) {
+            // 4. 소프트 딜리트 상태 확인
+            if (user.getIsDeleted()) {
+                // 탈퇴된 사용자 복구
+                user.reactivate(userInfo.getKakaoId().toString(),"kakao"); // 상태를 ACTIVE로 변경
+                userRepository.save(user);
+            }
+        } else {
+            // 고유 코드 생성
+            String uniqueCode = userService.generateUniqueUserCode();
+            // 5. 신규 사용자 저장
+            user = userRepository.save(User.builder()
+                    .email(userInfo.getEmail())
+                    .userCode(uniqueCode)
+                    .oauthId(userInfo.getKakaoId().toString())
+                    .userName(userInfo.getNickName())
+                    .provider("kakao")
+                    .role("ROLE_USER")
+                    .build());
+
+        }
+
+        saveAuthentication(user);
+
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userInfo.getEmail());
+
+        // Redis에 Refresh Token 저장
+        redisService.saveRefreshToken(userInfo.getEmail(), refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
+
+        UserLoginResponse userResponse = new UserLoginResponse(user.getId(), user.getUserCode(), user.getUserName(), user.getProfileImage(), user.getProvider(),accessToken);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
+                .path("/")
+                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
+                .build();
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        return userResponse;
     }
 
     @Transactional
