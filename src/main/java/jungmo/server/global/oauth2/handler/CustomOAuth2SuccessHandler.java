@@ -30,29 +30,17 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String email = oAuth2User.getAttribute("email");
 
         // JWT 생성
-        String accessToken = jwtTokenProvider.generateAccessToken(email);
         String refreshToken = jwtTokenProvider.generateRefreshToken(email);
 
         // Redis에 Refresh Token 저장
         redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
 
-        String domain = request.getServerName();
-        log.info("resolved domain from request: {}", domain);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")  //  크로스 도메인 요청 허용
-                .path("/")
-                .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
-                .build();
-
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")  //  크로스 도메인 요청 허용
+                .domain("jungmoserver.shop")  //  쿠키가 전송될 도메인 설정
                 .path("/")
                 .maxAge((int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000))
                 .build();
