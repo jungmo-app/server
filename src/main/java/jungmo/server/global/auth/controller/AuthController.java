@@ -62,7 +62,7 @@ public class AuthController implements AuthSwaggerController{
     }
 
     @PostMapping("/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoCodeRequest request, HttpServletResponse response) {
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> kakaoLogin(@RequestBody KakaoCodeRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,authService.kakaoAppLogin(request,response)));
     }
 
