@@ -12,6 +12,7 @@ import jungmo.server.domain.entity.User;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
+import jungmo.server.global.auth.dto.request.KakaoCodeRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
@@ -59,6 +60,12 @@ public class AuthController implements AuthSwaggerController{
         return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,authService.login(request, response)));
 
     }
+
+    @PostMapping("/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoCodeRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,authService.kakaoAppLogin(request,response)));
+    }
+
     @Override
     @PutMapping("/password")
     public ResultDetailResponse<Void> changePassword(
