@@ -14,6 +14,7 @@ import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
 import jungmo.server.global.auth.dto.response.KakaoUserResponse;
+import jungmo.server.global.auth.dto.response.TokenResponseDto;
 import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.error.ErrorCode;
 import jungmo.server.global.error.exception.BusinessException;
@@ -127,6 +128,32 @@ public class AuthService {
 
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
             return userResponse;
+
+        } catch (AuthenticationException e) {
+            throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
+        }
+    }
+
+    @Transactional
+    public TokenResponseDto testLogin(String email) {
+        try {
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXISTS));
+
+            if (user.getIsDeleted()) {
+                throw new BusinessException(ErrorCode.USER_DELETED);
+            }
+
+            // 3. Access Token과 Refresh Token 생성
+            String accessToken = jwtTokenProvider.generateAccessToken(email);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(email);
+
+            // 4. Redis에 Refresh Token 저장 (만료 시간 적용)
+            redisService.saveRefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
+
+            TokenResponseDto tokenResponseDto = new TokenResponseDto();
+            tokenResponseDto.setAccessToken(accessToken);
+            tokenResponseDto.setRefreshToken(refreshToken);
+            return tokenResponseDto;
 
         } catch (AuthenticationException e) {
             throw new BusinessException(ErrorCode.BAD_CREDENTIALS);
