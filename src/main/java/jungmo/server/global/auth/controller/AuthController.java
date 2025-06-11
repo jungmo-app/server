@@ -17,6 +17,7 @@ import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RefreshTokenRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
+import jungmo.server.global.auth.dto.response.TokenResponseDto;
 import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.auth.service.AuthService;
 import jungmo.server.global.error.ErrorCode;
@@ -46,6 +47,12 @@ public class AuthController implements AuthSwaggerController{
     @GetMapping("/isBlacklist")
     public ResultDetailResponse<Boolean> isBlackList(@RequestParam String accessToken) {
         return new ResultDetailResponse<>(ResultCode.IS_TOKEN_BLACKLIST, jwtTokenProvider.isTokenBlacklisted(accessToken));
+    }
+
+    @PostMapping("/test/login")
+    public ResultDetailResponse<TokenResponseDto> testLogin(String email) {
+        return new ResultDetailResponse<>(ResultCode.LOGIN_SUCCESS,authService.testLogin(email));
+
     }
 
     @Override

@@ -8,16 +8,14 @@ import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.dto.request.ResetPasswordRequest;
+import jungmo.server.global.auth.dto.request.KakaoCodeRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
 import jungmo.server.global.auth.dto.response.UserLoginResponse;
 import jungmo.server.global.result.ResultDetailResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "register/login", description = "회원가입 및 로그인 관련 API")
 public interface AuthSwaggerController {
@@ -30,6 +28,9 @@ public interface AuthSwaggerController {
 
     @Operation(summary = "로그인" , description = "로그인 API 액세스토큰 불필요")
     public ResponseEntity<ResultDetailResponse<UserLoginResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response);
+
+    @Operation(summary = "네이티브앱용 카카오로그인")
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> kakaoLogin(@RequestBody KakaoCodeRequest request, HttpServletResponse response);
 
     @Operation(summary = "로그인 한 유저 비밀번호 수정 API", description = "로그인 한 유저의 비밀번호를 수정하는 api")
     public ResultDetailResponse<Void> changePassword(
