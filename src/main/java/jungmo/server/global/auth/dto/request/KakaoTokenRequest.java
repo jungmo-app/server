@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakaoCodeRequest {
-    private String code;
+public class KakaoTokenRequest {
+    private String token;
 }

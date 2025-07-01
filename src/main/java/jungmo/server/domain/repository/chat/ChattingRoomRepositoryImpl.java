@@ -28,8 +28,8 @@ public class ChattingRoomRepositoryImpl implements ChattingRoomRepositoryCustom 
         return jpaQueryFactory
             .select(cr.id)
             .from(cr)
-            .join(gr).on(gr.id.eq(cr.gathering.id))
-            .join(gu).on(gu.gathering.id.eq(gr.id))
+            .join(gr)
+            .join(gu)
             .where(
                 gu.user.id.eq(memberId),
                 gr.isDeleted.isFalse(),
@@ -48,8 +48,8 @@ public class ChattingRoomRepositoryImpl implements ChattingRoomRepositoryCustom 
         return jpaQueryFactory
             .select(gu.user)
             .from(cr)
-            .join(gr).on(gr.id.eq(cr.gathering.id))
-            .join(gu).on(gu.gathering.id.eq(gr.id))
+            .join(gr)
+            .join(gu)
             .where(
                 cr.id.eq(chattingRoomId),
                 gr.isDeleted.isFalse(),

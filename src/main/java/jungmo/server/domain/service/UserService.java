@@ -66,10 +66,9 @@ public class UserService {
      * 유저 수정 메서드
      * @param userDto
      * @return
-     * @throws IOException
      */
     @Transactional
-    public Long updateUserProfile(UserRequest userDto) throws IOException {
+    public Long updateUserProfile(UserRequest userDto) {
         User user = userDataProvider.getUser();
         try {
             if (userDto.getProfileImage() != null && !userDto.getProfileImage().isEmpty()) {
