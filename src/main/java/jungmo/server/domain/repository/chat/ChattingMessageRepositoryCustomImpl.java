@@ -26,25 +26,25 @@ public class ChattingMessageRepositoryCustomImpl implements ChattingMessageRepos
         Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("sendTime").descending());
 
         Query query = new Query()
-            .with(pageable)
-            .skip(page.getOffset())
-            .limit(page.getPageSize());
+                .with(pageable)
+                .skip(page.getOffset())
+                .limit(page.getPageSize());
 
         // Add filter
         query.addCriteria(Criteria.where("roomId").is(roomId));
 
         List<ChattingMessage> result = mongoTemplate.find(query, ChattingMessage.class);
         List<ChatMessageResponse> content = result.stream()
-            .map(this::toResponse)
-            .toList();
+                .map(this::toResponse)
+                .toList();
 
         return PageableExecutionUtils.getPage(
-            content,
-            pageable,
-            () -> mongoTemplate.count(
-                Query.of(query).limit(-1).skip(-1),
-                ChatMessageResponse.class
-            )
+                content,
+                pageable,
+                () -> mongoTemplate.count(
+                        Query.of(query).limit(-1).skip(-1),
+                        ChatMessageResponse.class
+                )
         );
     }
 

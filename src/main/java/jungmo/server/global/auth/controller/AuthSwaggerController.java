@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import jungmo.server.domain.dto.request.PasswordRequest;
 import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.dto.request.ResetPasswordRequest;
-import jungmo.server.global.auth.dto.request.KakaoCodeRequest;
+import jungmo.server.global.auth.dto.request.KakaoTokenRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
@@ -30,7 +30,7 @@ public interface AuthSwaggerController {
     public ResponseEntity<ResultDetailResponse<UserLoginResponse>> login(@RequestBody @Valid LoginRequestDto request, HttpServletResponse response);
 
     @Operation(summary = "네이티브앱용 카카오로그인")
-    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> kakaoLogin(@RequestBody KakaoCodeRequest request, HttpServletResponse response);
+    public ResponseEntity<ResultDetailResponse<UserLoginResponse>> kakaoLogin(@RequestBody KakaoTokenRequest request, HttpServletResponse response);
 
     @Operation(summary = "로그인 한 유저 비밀번호 수정 API", description = "로그인 한 유저의 비밀번호를 수정하는 api")
     public ResultDetailResponse<Void> changePassword(

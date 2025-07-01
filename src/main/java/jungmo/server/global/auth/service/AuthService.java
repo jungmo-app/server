@@ -9,7 +9,7 @@ import jungmo.server.domain.dto.request.PasswordResetRequest;
 import jungmo.server.domain.repository.UserRepository;
 import jungmo.server.domain.service.EmailService;
 import jungmo.server.domain.service.UserService;
-import jungmo.server.global.auth.dto.request.KakaoCodeRequest;
+import jungmo.server.global.auth.dto.request.KakaoTokenRequest;
 import jungmo.server.global.auth.dto.request.LoginRequestDto;
 import jungmo.server.global.auth.dto.request.RegisterRequestDto;
 import jungmo.server.global.auth.dto.response.AccessTokenResponse;
@@ -161,8 +161,8 @@ public class AuthService {
     }
 
     @Transactional
-    public UserLoginResponse kakaoAppLogin(KakaoCodeRequest kakaoCodeRequest,HttpServletResponse response) {
-        KakaoUserResponse userInfo = kakaoService.getUserEmail(kakaoCodeRequest.getCode());
+    public UserLoginResponse kakaoAppLogin(KakaoTokenRequest kakaoToeknRequest, HttpServletResponse response) {
+        KakaoUserResponse userInfo = kakaoService.getUserEmail(kakaoToeknRequest.getToken());
 
         User user = userRepository.findByEmail(userInfo.getEmail()).orElse(null);
 
@@ -188,6 +188,7 @@ public class AuthService {
 
         }
 
+        //시큐리티 컨텍스트에 유저정보 저장
         saveAuthentication(user);
 
         String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());

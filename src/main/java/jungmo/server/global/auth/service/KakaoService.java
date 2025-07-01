@@ -59,33 +59,10 @@ public class KakaoService {
         }
     }
 
-    public KakaoUserResponse getUserEmail(String code) {
-        log.info("code = {}",code);
+    public KakaoUserResponse getUserEmail(String accessToken) {
+        log.info("accessToken : {}", accessToken);
 
-        // 1. access_token 요청
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", code);
-
-
-        HttpEntity<MultiValueMap<String, String>> tokenRequest = new HttpEntity<>(params, headers);
-        ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(
-                "https://kauth.kakao.com/oauth/token",
-                tokenRequest,
-                Map.class
-        );
-        log.info("tokenResponse : {}",tokenResponse);
-
-        String accessToken = (String) tokenResponse.getBody().get("access_token");
-        log.info("accessToken : {}",accessToken);
-
-        // 2. 사용자 정보 요청
+        // 사용자 정보 요청
         HttpHeaders userHeaders = new HttpHeaders();
         userHeaders.setBearerAuth(accessToken);
         HttpEntity<Void> userRequest = new HttpEntity<>(userHeaders);
@@ -98,7 +75,7 @@ public class KakaoService {
         );
 
         Map userMap = userResponse.getBody();
-        log.info("userMap : {}",userMap);
+        log.info("userMap : {}", userMap);
 
         Long kakaoId = ((Number) userMap.get("id")).longValue();
 
@@ -107,6 +84,6 @@ public class KakaoService {
         Map profile = (Map) account.get("profile");
         String nickname = (String) profile.get("nickname");
 
-       return new KakaoUserResponse(email,kakaoId,nickname);
+        return new KakaoUserResponse(email, kakaoId, nickname);
     }
 }

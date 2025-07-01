@@ -26,7 +26,6 @@ public class ChattingRoomService {
 
     private final UserDataProvider userDataProvider;
 
-    @CheckWritePermission
     public ChattingRoom saveChattingRoom(Gathering gathering) {
 
         // 이미 존재하는 채팅방인 지 체크
@@ -37,7 +36,6 @@ public class ChattingRoomService {
         return chattingRoomRepository.save(ChattingRoom.create(gathering));
     }
 
-    @CheckWritePermission
     public void deleteChattingRoom(Long gatheringId) {
 
         ChattingRoom chattingRoom = chattingRoomProvider.findChattingRoom(gatheringId);

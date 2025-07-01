@@ -63,7 +63,7 @@ public enum ErrorCode {
     CHATTING_ROOM_MEMBERS_NOT_EXISTS(404,"R004", "해당 채팅방에 참여하는 인원이 존재하지 않습니다."),
 
     //ChattingMessage
-    INVALID_CHATTING_MESSAGE_TYPE(400, "M001", "해당되는 채팅 메시지 타입이 존재하지 않습니다.");
+    INVALID_CHATTING_MESSAGE_TYPE(400, "C001", "해당되는 채팅 메시지 타입이 존재하지 않습니다.");
 
     private int status;
     private final String code;
